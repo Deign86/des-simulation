@@ -14,6 +14,9 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
 
   const { ciphertextHex, ivBits, cipherMode, keyBits, inputBits, ciphertext } = trace;
   const keyHex = keyBits.map(b => b.toString(16).toUpperCase()).join('');
+  const plaintextHexDisplay = inputBits.map(b => b.toString(16).toUpperCase()).join('');
+  const isCBC = cipherMode === 'CBC';
+  const ivDisplay = ivBits ? ivBits.map(b => b.toString(16).toUpperCase()).join('') : '';
 
   useEffect(() => {
     if (!checkRef.current) return;
@@ -44,7 +47,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass p-8 space-y-8"
+      className="glass min-h-screen w-full p-6 space-y-8"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -69,7 +72,11 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
               )}
             </h2>
             <p className="text-gray-400 text-sm mt-1">
-              {cipherMode} mode was used for {trace.numBlocks} block(s)
+              Mode: <span className={`font-medium ${mode === 'encrypt' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {mode === 'encrypt' ? 'Encrypt' : 'Decrypt'}
+              </span>
+              {' • '}{cipherMode || 'Unknown'}
+              {isCBC && ivDisplay && <span className="text-amber-400"> • IV: {ivDisplay}</span>}
             </p>
           </div>
         </div>
@@ -77,8 +84,8 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {infoCards.map(({ icon: Icon, label, value, color }) => (
-          <div key={label} className="glass p-4 rounded-lg text-center">
-            <Icon className={`w-5 h-5 mx-auto mb-2 text-${color}-400`} />
+          <div key={label} className="bg-white/10 rounded-lg p-4 text-center">
+            <Icon className={`w-6 h-6 mx-auto mb-2 text-${color}-400`} />
             <div className="text-2xl font-bold text-white">{value}</div>
             <div className="text-xs text-gray-400">{label}</div>
           </div>
@@ -93,8 +100,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
             </span>
           </div>
           <code className="font-mono text-lg text-white break-all">
-            {inputBits.map(b => b.toString(16).toUpperCase()).join('').slice(0, 32)}
-            {inputBits.length > 32 ? '...' : ''}
+            {plaintextHexDisplay}
           </code>
           <div className="mt-2 text-xs text-gray-500">{inputBits.length} bits input</div>
         </div>
@@ -140,19 +146,19 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
         </div>
       </div>
 
-{ivBits && (
-          <div className="flex items-center gap-2 p-4 bg-amber-500/10 rounded-lg border border-amber-400/30">
-            <Cylinder className="w-5 h-5 text-amber-400" />
-            <span className="text-sm text-amber-300">CBC Mode with IV: {ivBits.map(b => b.toString(16).toUpperCase()).join('').slice(0, 16)}</span>
-          </div>
-        )}
+      {isCBC && ivDisplay && (
+        <div className="flex items-center gap-2 p-4 bg-amber-500/10 rounded-lg border border-amber-400/30">
+          <Cylinder className="w-5 h-5 text-amber-400" />
+          <span className="text-sm text-amber-300">CBC Mode with IV: {ivDisplay}</span>
+        </div>
+      )}
 
-        {cipherMode === 'ECB' && !ivBits && (
-          <div className="flex items-center gap-2 p-4 bg-gray-500/10 rounded-lg border border-gray-400/30">
-            <Cylinder className="w-5 h-5 text-gray-400" />
-            <span className="text-sm text-gray-400">ECB Mode (no IV) - Identical plaintext blocks produce identical ciphertext blocks</span>
-          </div>
-        )}
+      {cipherMode === 'ECB' && !ivBits && (
+        <div className="flex items-center gap-2 p-4 bg-gray-500/10 rounded-lg border border-gray-400/30">
+          <Cylinder className="w-5 h-5 text-gray-400" />
+          <span className="text-sm text-gray-400">ECB Mode (no IV) - Identical plaintext blocks produce identical ciphertext blocks</span>
+        </div>
+      )}
 
       <div className="flex items-center justify-between pt-4 border-t border-white/10">
         <div className="flex items-center gap-2 text-xs text-gray-500">
