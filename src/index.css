@@ -3,11 +3,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @theme {
+  /* Brand Colors */
+  --color-brand: #00D4FF;
+  --color-brand-muted: #00D4FF/20;
+  --color-brand-subtle: #00D4FF/10;
+
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-success-muted: #10B981/20;
+  --color-success-subtle: #10B981/10;
+
+  --color-warning: #F59E0B;
+  --color-warning-muted: #F59E0B/20;
+  --color-warning-subtle: #F59E0B/10;
+
+  --color-danger: #F43F5E;
+  --color-danger-muted: #F43F5E/20;
+  --color-danger-subtle: #F43F5E/10;
+
+  /* Accent Colors for Different Stages */
+  --color-stage-cyan: #00D4FF;
+  --color-stage-purple: #A855F7;
+  --color-stage-blue: #3B82F6;
+  --color-stage-amber: #F59E0B;
+
+  /* Neutral Colors */
   --color-void: #08090F;
-  --color-accent-cyan: #00D4FF;
-  --color-accent-amber: #F59E0B;
-  --color-accent-emerald: #10B981;
-  --color-accent-rose: #F43F5E;
+  --color-surface: #1A1A1F;
+  --color-surface-raised: #25252A;
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+  --color-surface-active: rgba(255, 255, 255, 0.1);
+
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-border-hover: rgba(255, 255, 255, 0.2);
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A1A1AA;
+  --color-text-tertiary: #71717A;
+  --color-text-muted: #52525B;
+
+  /* Glass Effect */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Font Families */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
 }
 
 @layer base {
@@ -45,6 +86,24 @@
   }
 
   .glass-cyan-border {
-    @apply border-accent-cyan/20;
+    @apply border-brand/20;
   }
+}
+
+/* Semantic utility classes for consistent color usage */
+@layer utilities {
+  .text-brand { color: var(--color-brand); }
+  .text-success { color: var(--color-success); }
+  .text-warning { color: var(--color-warning); }
+  .text-danger { color: var(--color-danger); }
+
+  .bg-brand-muted { background: var(--color-brand-muted); }
+  .bg-success-muted { background: var(--color-success-muted); }
+  .bg-warning-muted { background: var(--color-warning-muted); }
+  .bg-danger-muted { background: var(--color-danger-muted); }
+
+  .border-brand { border-color: var(--color-brand); }
+  .border-success { border-color: var(--color-success); }
+  .border-warning { border-color: var(--color-warning); }
+  .border-danger { border-color: var(--color-danger); }
 }

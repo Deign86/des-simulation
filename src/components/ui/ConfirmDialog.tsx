@@ -22,9 +22,9 @@ export default function ConfirmDialog({
   variant = 'warning'
 }: ConfirmDialogProps) {
   const variantStyles = {
-    danger: 'bg-red-500/20 border-red-500/30 text-red-300',
-    warning: 'bg-amber-500/20 border-amber-500/30 text-amber-300',
-    info: 'bg-cyan-500/20 border-cyan-500/30 text-cyan-300'
+    danger: 'bg-danger-muted border-danger/30 text-red-300',
+    warning: 'bg-warning-muted border-warning/30 text-amber-300',
+    info: 'bg-brand-muted border-brand/30 text-cyan-300'
   };
 
   const confirmButtonStyles = {

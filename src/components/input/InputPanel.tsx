@@ -68,7 +68,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                onChange={e => setInputValue(e.target.value)}
                placeholder="Enter any text or hex..."
                aria-label={mode === 'encrypt' ? 'Plaintext input' : 'Ciphertext input'}
-               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
+               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-brand/50 transition-colors"
              />
              <button
                onClick={() => handleRandom('input')}
@@ -78,7 +78,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                Random
              </button>
            </div>
-          <div className={`text-xs mt-1 ${isInputValid ? 'text-emerald-400' : 'text-amber-400'}`}>
+          <div className={`text-xs mt-1 ${isInputValid ? 'text-success' : 'text-warning'}`}>
             {inputBitCount > 0 ? `${inputBitCount} bits ${mode === 'decrypt' || isInputHex ? `(${inputValue.length} hex chars)` : `(plaintext)`} ${inputBitCount % 64 !== 0 && '(will pad)'}` : 'Enter input to continue'}
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                onChange={e => setKeyValue(e.target.value)}
                placeholder="Enter text or 16 hex chars..."
                aria-label="Secret key input"
-               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
+               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-brand/50 transition-colors"
              />
              <button
                onClick={() => handleRandom('key')}
@@ -104,16 +104,16 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                Random
              </button>
            </div>
-          <div className={`text-xs mt-1 ${isKeyValid ? 'text-emerald-400' : keyValue.length === 0 ? 'text-rose-400' : 'text-amber-400'}`}>
+          <div className={`text-xs mt-1 ${isKeyValid ? 'text-success' : keyValue.length === 0 ? 'text-danger' : 'text-warning'}`}>
             {keyValue.length === 0 ? 'Key required' : keyBitCount === 0 ? 'Invalid input' : `${keyBitCount}/64 bits`}
             {keyValue.length > 0 && keyBitCount > 0 && keyBitCount < 64 && ' (will pad to 64 bits)'}
           </div>
         </div>
 
-        <div className="glass p-4 space-y-3 border-amber-400/20">
+        <div className="glass p-4 space-y-3 border-warning/20">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-amber-400" />
-            <span className="text-sm font-medium text-amber-400">CBC Mode (recommended)</span>
+            <Shield className="w-4 h-4 text-warning" />
+            <span className="text-sm font-medium text-warning">CBC Mode (recommended)</span>
           </div>
           <p className="text-xs text-gray-400">
             Initialization Vector (IV) makes identical plaintexts produce different ciphertexts. Leave empty for ECB mode (less secure).
@@ -128,7 +128,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                 value={ivValue}
                 onChange={e => setIvValue(e.target.value)}
                 placeholder="Enter text or leave empty..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-amber-500/50 transition-colors"
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-warning/50 transition-colors"
               />
               <button
                 onClick={() => handleRandom('iv')}
@@ -137,7 +137,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                 Random
               </button>
             </div>
-            <div className={`text-xs mt-1 ${isIvValid ? 'text-emerald-400' : 'text-amber-400'}`}>
+            <div className={`text-xs mt-1 ${isIvValid ? 'text-success' : 'text-warning'}`}>
               {ivBitCount === 0 ? 'No IV (ECB mode)' : ivBitCount === 64 ? `${ivBitCount}/64 bits OK` : `${ivBitCount}/64 bits — must be exactly 64 bits (8 chars)`}
             </div>
           </div>
@@ -161,8 +161,8 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
         disabled={!isInputValid || !isKeyValid || !isIvValid || loading}
         className={`w-full py-4 rounded-xl font-semibold text-white transition-all ${
           mode === 'encrypt'
-            ? 'bg-gradient-to-r from-cyan-500 to-blue-600'
-            : 'bg-gradient-to-r from-amber-500 to-orange-600'
+            ? 'bg-gradient-to-r from-brand to-blue-600'
+            : 'bg-gradient-to-r from-warning to-orange-600'
         } ${(!isInputValid || !isKeyValid || !isIvValid || loading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
       >
         {loading ? (

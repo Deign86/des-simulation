@@ -87,7 +87,7 @@ function StepControlsComponent({
               onClick={() => onSpeedChange(s)}
               title={`Set speed to ${s}x`}
               className={`px-2 py-1 rounded text-xs font-mono transition-colors ${
-                speed === s ? 'bg-cyan-500/20 text-cyan-400' : 'hover:bg-white/10'
+                speed === s ? 'bg-brand-muted text-brand' : 'hover:bg-white/10'
               }`}
             >
               {s}x            </button>

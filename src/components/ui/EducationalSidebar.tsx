@@ -142,7 +142,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
     >
       <div className="p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-cyan-400">Learning Mode</h3>
+          <h3 className="font-bold text-brand">Learning Mode</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
@@ -156,7 +156,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
 
         <div className="glass p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <IconComponent className="w-5 h-5 text-cyan-400" />
+            <IconComponent className="w-5 h-5 text-brand" />
             <h4 className="font-semibold text-white">{content.title}</h4>
           </div>
           <p className="text-sm text-cyan-300 leading-relaxed">
@@ -166,7 +166,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
 
         <div className="space-y-3">
           <div className="space-y-1">
-            <h5 className="text-xs font-semibold text-amber-400 uppercase tracking-wide">What Happens</h5>
+            <h5 className="text-xs font-semibold text-warning uppercase tracking-wide">What Happens</h5>
             <p className="text-sm text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatBold(content.what) }} />
           </div>
 
@@ -182,7 +182,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
 
           {content.formula && (
             <div className="space-y-1">
-              <h5 className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Formula</h5>
+              <h5 className="text-xs font-semibold text-success uppercase tracking-wide">Formula</h5>
               <code className="text-sm text-emerald-300 font-mono bg-black/20 p-2 rounded block" dangerouslySetInnerHTML={{ __html: formatBold(content.formula) }} />
             </div>
           )}

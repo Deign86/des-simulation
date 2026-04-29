@@ -148,7 +148,7 @@ export default function App() {
                       </button>
                       <button
                         onClick={() => setStage('results')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-sm hover:bg-cyan-500/30 hover:text-cyan-200 transition-all"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-muted border border-brand/30 text-brand text-sm hover:bg-brand-muted/80 hover:text-brand transition-all"
                       >
                         View Results
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

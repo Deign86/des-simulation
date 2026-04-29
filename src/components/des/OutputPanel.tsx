@@ -87,12 +87,12 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
               {mode === 'encrypt' ? (
                 <>
-                  <Lock className="w-6 h-6 text-emerald-400" />
+                  <Lock className="w-6 h-6 text-success" />
                   Encryption Complete
                 </>
               ) : (
                 <>
-                  <CheckCircle className="w-6 h-6 text-emerald-400" />
+                  <CheckCircle className="w-6 h-6 text-success" />
                   Decryption Complete
                 </>
               )}
@@ -104,10 +104,10 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
         </div>
       </div>
 
-      <div className="p-4 bg-cyan-500/10 rounded-lg border border-cyan-400/30">
+      <div className="p-4 bg-brand-subtle rounded-lg border border-brand/30">
         <div className="flex items-center gap-2 mb-2">
-          <ArrowRightLeft className="w-5 h-5 text-cyan-400" />
-          <span className="text-lg font-semibold text-cyan-400">
+          <ArrowRightLeft className="w-5 h-5 text-brand" />
+          <span className="text-lg font-semibold text-brand">
             {mode === 'encrypt' ? 'Ciphertext' : 'Recovered Plaintext'}
           </span>
         </div>
@@ -116,7 +116,7 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
         </div>
         <button
           onClick={() => copyToClipboard(ciphertextHex, 'hex')}
-          className="mt-3 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg flex items-center gap-2 transition-colors"
+          className="mt-3 px-4 py-2 bg-brand-muted hover:bg-brand-muted/80 text-brand rounded-lg flex items-center gap-2 transition-colors"
         >
           <Copy className="w-4 h-4" />
           {copiedHex ? 'Copied!' : 'Copy'}
@@ -143,12 +143,12 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
 
       <div className="grid grid-cols-1 gap-4">
         <div className="bg-white/10 rounded-lg p-4 text-center">
-          <Key className="w-5 h-5 mx-auto mb-2 text-amber-400" />
+          <Key className="w-5 h-5 mx-auto mb-2 text-warning" />
           <div className="text-lg font-bold text-white break-all px-1">{keyHex}</div>
           <div className="text-xs text-gray-400">Key</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
-          <Cylinder className="w-5 h-5 mx-auto mb-2 text-amber-400" />
+          <Cylinder className="w-5 h-5 mx-auto mb-2 text-warning" />
           <div className="text-lg font-bold text-white break-all px-1">{ivDisplay || 'none'}</div>
           <div className="text-xs text-gray-400">IV</div>
         </div>
@@ -163,12 +163,12 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
           <div className="text-xs text-gray-400">Padding</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
-          <Clock className="w-5 h-5 mx-auto mb-2 text-cyan-400" />
+          <Clock className="w-5 h-5 mx-auto mb-2 text-brand" />
           <div className="text-lg font-bold text-white">16</div>
           <div className="text-xs text-gray-400">Rounds</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
-          <Binary className="w-5 h-5 mx-auto mb-2 text-cyan-400" />
+          <Binary className="w-5 h-5 mx-auto mb-2 text-brand" />
           <div className="text-lg font-bold text-white">{bits}</div>
           <div className="text-xs text-gray-400">Bits</div>
         </div>
@@ -178,14 +178,14 @@ export default function OutputPanel({ trace, mode, totalSteps, onReset }: Output
           <div className="text-xs text-gray-400">Bytes</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
-          <Clock className="w-5 h-5 mx-auto mb-2 text-amber-400" />
+          <Clock className="w-5 h-5 mx-auto mb-2 text-warning" />
           <div className="text-lg font-bold text-white">{displaySteps}</div>
           <div className="text-xs text-gray-400">Steps</div>
         </div>
       </div>
 
-      <div className="flex items-start gap-2 p-4 bg-red-500/10 rounded-lg border border-red-400/30">
-        <Shield className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-2 p-4 bg-danger-subtle rounded-lg border border-danger/30">
+        <Shield className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
         <div className="text-sm text-red-300">
           56-bit effective key = 2⁵⁶ ≈ 72 quadrillion possible keys. In 1999, EFF's DES Cracker broke a DES key in under 22 hours. Use AES-256 for real security.
         </div>
