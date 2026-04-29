@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import HeroSection from './components/hero/HeroSection';
 import InputPanel from './components/input/InputPanel';
 import DESController from './components/des/DESController';
+import OutputPanel from './components/des/OutputPanel';
 import StepControls from './components/ui/StepControls';
 import EducationalSidebar from './components/ui/EducationalSidebar';
 import { useDES } from './hooks/useDES';
 import { useStepPlayer } from './hooks/useStepPlayer';
 import AnimatedBackground from './components/ui/AnimatedBackground';
 import { Lock, Unlock } from 'lucide-react';
-import { bitsToHex } from './lib/des-utils';
 
 // Mode Context
 interface ModeContextValue {
@@ -157,80 +157,7 @@ export default function App() {
 
             {/* Stage 4: Results */}
             {stage === 'results' && trace && (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                className="max-w-5xl mx-auto space-y-6 min-h-screen py-12 px-4 pr-80"
-              >
-                <div className="flex justify-between">
-                  <button
-                    onClick={() => setStage('simulation')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Visualization
-                  </button>
-                  <button
-                    onClick={handleReset}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    Start Over
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-white">Event Log</h2>
-                    <div className="h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent bg-black/20 rounded-lg p-3 font-mono text-xs text-gray-300 space-y-1">
-                      {steps?.map((stepItem, idx) => (
-                        <div key={idx} className={`p-1 cursor-pointer hover:bg-white/5 rounded ${idx === currentStep ? 'bg-cyan-500/20 text-cyan-300' : ''}`}>
-                          {stepItem.label || stepItem.stage}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-white">Results</h2>
-                    <div className="space-y-3">
-                      {trace.mode === 'encrypt' ? (
-                        <>
-                          <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                            <div className="text-xs text-gray-400 mb-1">Input (Plaintext)</div>
-                            <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.inputBits)}</div>
-                          </div>
-                          <div className="p-3 bg-white/5 rounded-lg border border-cyan-500/30">
-                            <div className="text-xs text-cyan-400 mb-1">Output (Ciphertext)</div>
-                            <div className="font-mono text-sm text-gray-200 break-all">{trace.ciphertextHex}</div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                            <div className="text-xs text-gray-400 mb-1">Input (Ciphertext)</div>
-                            <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.inputBits)}</div>
-                          </div>
-                          <div className="p-3 bg-white/5 rounded-lg border border-cyan-500/30">
-                            <div className="text-xs text-cyan-400 mb-1">Output (Plaintext)</div>
-                            <div className="font-mono text-sm text-gray-200 break-all">{trace.ciphertextHex}</div>
-                          </div>
-                        </>
-                      )}
-                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
-                        <div className="text-xs text-gray-400 mb-1">Key</div>
-                        <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.keyBits)}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+              <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} />
             )}
           </AnimatePresence>
             </div>
