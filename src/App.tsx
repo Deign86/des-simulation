@@ -135,7 +135,7 @@ export default function App() {
                     </button>
                   </div>
 
-                  <DESController trace={trace} currentStep={currentStep} steps={steps} />
+                  <DESController trace={trace} currentStep={currentStep} steps={steps} onReset={handleReset} />
 
                   {totalSteps > 0 && (
                     <StepControls

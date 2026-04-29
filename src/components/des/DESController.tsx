@@ -13,9 +13,10 @@ interface DESControllerProps {
   currentStep: number;
   steps: Step[];
   totalSteps?: number;
+  onReset?: () => void;
 }
 
-export default function DESController({ trace, currentStep, steps, totalSteps }: DESControllerProps) {
+export default function DESController({ trace, currentStep, steps, totalSteps, onReset }: DESControllerProps) {
   const step = steps[currentStep];
   if (!step) return null;
 
@@ -88,7 +89,7 @@ export default function DESController({ trace, currentStep, steps, totalSteps }:
         return <StageFP trace={trace} isActive />;
 
       case 'output':
-        return <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} />;
+        return <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} onReset={onReset} />;
 
       default:
         return null;
