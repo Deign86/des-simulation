@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Lock, Unlock, Shield } from 'lucide-react';
+import { Loader2, Lock, Unlock, Shield, X } from 'lucide-react';
 import { hexToBits, stringToBits } from '../../lib/des-utils';
 
 interface InputPanelProps {
@@ -38,15 +38,22 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
     else setIvValue(randomHex);
   };
 
+  const handleClear = () => {
+    setInputValue('');
+    setKeyValue('');
+    setIvValue('');
+  };
+
   const handleSubmit = () => {
     if (inputBitCount > 0 && keyBitCount === 64) {
+      const inputHex = isInputHex ? inputValue : Array.from(inputValue).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('').toUpperCase();
       const keyHex = isKeyHex ? keyValue : Array.from(keyValue).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('').slice(0, 16).toUpperCase();
       const ivHex = ivBitCount === 64 ? (isIvHex ? ivValue : Array.from(ivValue).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('').slice(0, 16).toUpperCase()) : undefined;
-      onRun(inputValue, keyHex, ivHex);
+      onRun(inputHex, keyHex, ivHex);
     }
   };
 
-  const isInputValid = inputBitCount > 0 && inputBitCount <= 512 && (mode === 'decrypt' || isInputHex || inputValue.length === 0);
+  const isInputValid = inputBitCount > 0 && inputBitCount <= 512;
   const isKeyValid = keyBitCount === 64 && keyValue.length > 0;
   const isIvValid = ivBitCount === 64 || ivBitCount === 0;
 
@@ -59,14 +66,14 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-white mb-2">
-            {mode === 'encrypt' ? 'Plaintext' : 'Ciphertext'} (text or hex)
+            {mode === 'encrypt' ? 'Plaintext' : 'Ciphertext'}
           </label>
            <div className="flex gap-2 items-center">
              <input
                type="text"
                value={inputValue}
                onChange={e => setInputValue(e.target.value)}
-               placeholder="Enter any text or hex..."
+               placeholder="Type or paste the text you want to encrypt…"
                aria-label={mode === 'encrypt' ? 'Plaintext input' : 'Ciphertext input'}
                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-brand/50 transition-colors"
              />
@@ -91,14 +98,14 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
 
         <div>
           <label className="block text-sm font-medium text-white mb-2">
-            Secret Key (text or 64-bit hex)
+            Secret key (exactly 8 characters)
           </label>
            <div className="flex gap-2 items-center">
              <input
                type="text"
                value={keyValue}
                onChange={e => setKeyValue(e.target.value)}
-               placeholder="Enter text or 16 hex chars..."
+               placeholder="e.g. MyKey123"
                aria-label="Secret key input"
                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-brand/50 transition-colors"
              />
@@ -132,7 +139,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                 type="text"
                 value={ivValue}
                 onChange={e => setIvValue(e.target.value)}
-                placeholder="Enter text or leave empty..."
+                placeholder="e.g. InitVec1"
                 className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-warning/50 transition-colors"
               />
               <button
@@ -161,26 +168,37 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
         ))}
       </div>
 
-      <button
-        onClick={handleSubmit}
-        disabled={!isInputValid || !isKeyValid || !isIvValid || loading}
-        className={`w-full py-4 rounded-xl font-semibold text-white transition-all ${
-          mode === 'encrypt'
-            ? 'bg-gradient-to-r from-brand to-blue-600'
-            : 'bg-gradient-to-r from-warning to-orange-600'
-        } ${(!isInputValid || !isKeyValid || !isIvValid || loading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
-      >
-        {loading ? (
+      <div className="flex gap-3">
+        <button
+          onClick={handleClear}
+          className="px-4 py-4 rounded-xl font-semibold text-white bg-white/5 hover:bg-white/10 transition-all"
+        >
           <span className="flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" /> Computing...
+            <X className="w-4 h-4" />
+            Clear
           </span>
-        ) : (
-          <span className="flex items-center justify-center gap-2">
-            {mode === 'encrypt' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
-            {mode === 'encrypt' ? 'Encrypt & Walk Through' : 'Decrypt & Walk Through'}
-          </span>
-        )}
-      </button>
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={!isInputValid || !isKeyValid || !isIvValid || loading}
+          className={`flex-1 py-4 rounded-xl font-semibold text-white transition-all ${
+            mode === 'encrypt'
+              ? 'bg-gradient-to-r from-brand to-blue-600'
+              : 'bg-gradient-to-r from-warning to-orange-600'
+          } ${(!isInputValid || !isKeyValid || !isIvValid || loading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" /> Computing...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              {mode === 'encrypt' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+              {mode === 'encrypt' ? 'Encrypt & Walk Through' : 'Decrypt & Walk Through'}
+            </span>
+          )}
+        </button>
+      </div>
     </motion.div>
   );
 }
