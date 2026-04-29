@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface PermutationTableProps {
   title: string;
@@ -26,7 +27,7 @@ export default function PermutationTable({
     >
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
         <h4 className="font-semibold text-white">{title}</h4>
-        <span className="text-gray-500">{isOpen ? '▼' : '▶'}</span>
+        {isOpen ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
       </div>
 
       {isOpen && (

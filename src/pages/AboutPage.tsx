@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { PRESENTATION } from '../config/presentation';
+import { Calendar, Check } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -30,8 +31,8 @@ export default function AboutPage() {
           succeeded by AES in 2001.
         </p>
         <div className="flex gap-4 text-sm text-gray-400">
-          <span>📅 1977: FIPS PUB 46</span>
-          <span>📅 2001: AES replaces DES</span>
+          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> 1977: FIPS PUB 46</span>
+          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> 2001: AES replaces DES</span>
         </div>
       </div>
 
@@ -69,12 +70,15 @@ export default function AboutPage() {
             {[
               { name: 'DES', key: '56-bit', status: 'Broken (1998)' },
               { name: '3DES', key: '168-bit', status: 'Deprecated (2023)' },
-              { name: 'AES', key: '128/256-bit', status: '✓ Secure' }
+              { name: 'AES', key: '128/256-bit', status: 'Secure' }
             ].map(row => (
               <tr key={row.name} className="border-b border-white/5">
                 <td className="py-2 text-white">{row.name}</td>
                 <td className="py-2 text-gray-400">{row.key}</td>
-                <td className="py-2 text-gray-400">{row.status}</td>
+                <td className="py-2 text-gray-400 flex items-center gap-1">
+                  {row.name === 'AES' && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                  {row.status}
+                </td>
               </tr>
             ))}
           </tbody>

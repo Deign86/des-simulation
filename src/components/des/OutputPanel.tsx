@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Lock, Unlock, Copy, CheckCircle } from 'lucide-react';
 
 interface OutputPanelProps {
   plaintextHex: string;
@@ -41,8 +42,18 @@ export default function OutputPanel({ plaintextHex, keyHex, ciphertextHex, mode,
           </svg>
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white">
-            {mode === 'encrypt' ? '🔒 Encryption Complete' : '🔓 Decryption Complete'}
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            {mode === 'encrypt' ? (
+              <>
+                <Lock className="w-5 h-5 text-emerald-400" />
+                Encryption Complete
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5 text-emerald-400" />
+                Decryption Complete
+              </>
+            )}
           </h3>
         </div>
       </div>
@@ -63,7 +74,8 @@ export default function OutputPanel({ plaintextHex, keyHex, ciphertextHex, mode,
               className="p-2 hover:bg-white/10 rounded transition-colors text-xs text-gray-400"
               title="Copy to clipboard"
             >
-              📋            </button>
+              <Copy className="w-4 h-4" />
+            </button>
           </div>
         ))}
       </div>
@@ -71,9 +83,10 @@ export default function OutputPanel({ plaintextHex, keyHex, ciphertextHex, mode,
       {mode === 'encrypt' && onDecryptVerify && (
         <button
           onClick={onDecryptVerify}
-          className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-lg hover:scale-[1.02] active:scale-[0.98] transition-transform"
+          className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white font-semibold rounded-lg hover:scale-[1.02] active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
         >
-          🔓 Decrypt to Verify        </button>
+          <Unlock className="w-4 h-4" />
+          Decrypt to Verify        </button>
       )}
     </motion.div>
   );

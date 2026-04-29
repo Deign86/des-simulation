@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 
 interface StepControlsProps {
   currentStep: number;
@@ -59,7 +60,7 @@ export default function StepControls({
           disabled={currentStep === 0}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30"
         >
-          ←        </button>
+          <ChevronLeft className="w-4 h-4" />        </button>
 
         <span className="font-mono text-sm min-w-[100px] text-center">
           Step {currentStep + 1} / {totalSteps}        </span>
@@ -69,7 +70,7 @@ export default function StepControls({
           disabled={currentStep === totalSteps - 1}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30"
         >
-          →        </button>
+          <ChevronRight className="w-4 h-4" />        </button>
 
         <div className="w-px h-6 bg-white/10" />
 
@@ -77,7 +78,7 @@ export default function StepControls({
           onClick={onTogglePlay}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
         >
-          {isPlaying ? '⏸' : '▶'}        </button>
+          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}        </button>
 
         <div className="flex gap-1">
           {SPEEDS.map(s => (

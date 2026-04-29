@@ -1,12 +1,10 @@
 import { motion } from 'framer-motion';
+import { Lock, Unlock, Info } from 'lucide-react';
+import { useMode } from '../../App';
 
-interface HeaderProps {
-  mode: 'encrypt' | 'decrypt';
-  onModeToggle: () => void;
-  onAbout: () => void;
-}
+export default function Header({ onAbout }: { onAbout: () => void }) {
+  const { mode, toggleMode } = useMode();
 
-export default function Header({ mode, onModeToggle, onAbout }: HeaderProps) {
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -28,26 +26,29 @@ export default function Header({ mode, onModeToggle, onAbout }: HeaderProps) {
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           />
           <button
-            onClick={() => mode !== 'encrypt' && onModeToggle()}
-            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            onClick={() => mode !== 'encrypt' && toggleMode()}
+            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
               mode === 'encrypt' ? 'text-white' : 'text-gray-400'
             }`}
           >
-            🔐 Encrypt          </button>
+            <Lock className="w-3.5 h-3.5" />
+            Encrypt          </button>
           <button
-            onClick={() => mode !== 'decrypt' && onModeToggle()}
-            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            onClick={() => mode !== 'decrypt' && toggleMode()}
+            className={`relative z-10 px-4 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
               mode === 'decrypt' ? 'text-white' : 'text-gray-400'
             }`}
           >
-            🔓 Decrypt          </button>
+            <Unlock className="w-3.5 h-3.5" />
+            Decrypt          </button>
         </div>
 
         <button
           onClick={onAbout}
-          className="text-gray-400 hover:text-white transition-colors text-sm"
+          className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
         >
-          ⓘ About DES        </button>
+          <Info className="w-4 h-4" />
+          About DES        </button>
       </div>
     </motion.header>
   );

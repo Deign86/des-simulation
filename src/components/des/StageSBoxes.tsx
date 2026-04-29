@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { SBoxTrace } from '../../types/des.types';
 import { S_BOXES } from '../../lib/des-tables';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface StageSBoxesProps {
   sboxTraces: SBoxTrace[];
@@ -36,7 +37,7 @@ export default function StageSBoxes({ sboxTraces, round }: StageSBoxesProps) {
     >
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
         <h3 className="font-semibold text-white">S-Box Substitution — Round {round}</h3>
-        <span>{isOpen ? '▼' : '▶'}</span>
+        {isOpen ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
       </div>
 
       {isOpen && (

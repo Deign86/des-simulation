@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { KeyScheduleRound } from '../../types/des.types';
+import { Check } from 'lucide-react';
 
 interface StageKeyScheduleProps {
   rounds: KeyScheduleRound[];
@@ -67,7 +68,7 @@ export default function StageKeySchedule({ rounds, activeRound }: StageKeySchedu
               <span className="font-mono text-xs text-gray-500 truncate max-w-[120px]">
                 {round.subkey.slice(0, 12).join('')}...              </span>
 
-              {idx < (activeRound ?? 0) && <span className="text-emerald-400">✓</span>}
+              {idx < (activeRound ?? 0) && <Check className="w-3.5 h-3.5 text-emerald-400" />}
             </motion.div>
           );
         })}

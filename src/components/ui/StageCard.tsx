@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Circle, Check, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface StageCardProps {
   stageNumber: number;
@@ -27,8 +28,16 @@ export default function StageCard({
   };
 
   const statusBadge = {
-    active: <span className="text-cyan-400 text-xs animate-pulse">● Active</span>,
-    complete: <span className="text-emerald-400 text-xs">✓ Complete</span>,
+    active: (
+      <span className="flex items-center gap-1.5 text-cyan-400 text-xs animate-pulse">
+        <Circle className="w-2 h-2 fill-cyan-400" /> Active
+      </span>
+    ),
+    complete: (
+      <span className="flex items-center gap-1 text-emerald-400 text-xs">
+        <Check className="w-3 h-3" /> Complete
+      </span>
+    ),
     pending: <span className="text-gray-500 text-xs">Pending</span>
   };
 
@@ -54,7 +63,7 @@ export default function StageCard({
         </div>
         <div className="flex items-center gap-3">
           {statusBadge[status]}
-          <span className="text-gray-500 text-sm">{isOpen ? '▼' : '▶'}</span>
+          {isOpen ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
         </div>
       </div>
 

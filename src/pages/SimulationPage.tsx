@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import HeroSection from '../components/hero/HeroSection';
 import InputPanel from '../components/input/InputPanel';
 import DESController from '../components/des/DESController';
@@ -6,11 +6,12 @@ import StepControls from '../components/ui/StepControls';
 import EducationalSidebar from '../components/ui/EducationalSidebar';
 import { useDES } from '../hooks/useDES';
 import { useStepPlayer } from '../hooks/useStepPlayer';
+import { useMode } from '../App';
 
 export default function SimulationPage() {
   const [showHero, setShowHero] = useState(true);
-  const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt');
   const [showSidebar, setShowSidebar] = useState(false);
+  const { mode, toggleMode } = useMode();
 
   const { trace, loading, runEncrypt, runDecrypt, reset } = useDES();
   const { currentStep, totalSteps, currentStepData, isPlaying, speed, next, prev, togglePlay, setSpeed, reset: resetStep, steps } = useStepPlayer(trace);
@@ -22,25 +23,24 @@ export default function SimulationPage() {
     else runDecrypt(inputHex, keyHex);
   };
 
-  const handleModeToggle = useCallback(() => {
-    setMode(prev => prev === 'encrypt' ? 'decrypt' : 'encrypt');
-    reset();
-    resetStep();
-  }, [reset, resetStep]);
-
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') prev();
       if (e.key === 'ArrowRight') next();
       if (e.key === ' ') { e.preventDefault(); togglePlay(); }
       if (e.key === 'r' || e.key === 'R') { reset(); resetStep(); }
-      if (e.key === 'e' || e.key === 'E') { if (mode !== 'encrypt') handleModeToggle(); }
-      if (e.key === 'd' || e.key === 'D') { if (mode !== 'decrypt') handleModeToggle(); }
+      if (e.key === 'e' || e.key === 'E') { if (mode !== 'encrypt') toggleMode(); }
+      if (e.key === 'd' || e.key === 'D') { if (mode !== 'decrypt') toggleMode(); }
       if (e.key === '?' || e.key === '/') setShowSidebar(prev => !prev);
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [prev, next, togglePlay, reset, resetStep, mode, handleModeToggle]);
+  }, [prev, next, togglePlay, reset, resetStep, mode, toggleMode]);
+
+  useEffect(() => {
+    reset();
+    resetStep();
+  }, [mode, reset, resetStep]);
 
   if (showHero) return <HeroSection onStart={handleStart} />;
 

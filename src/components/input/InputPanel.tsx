@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Loader2, Lock, Unlock } from 'lucide-react';
 import { hexToBits } from '../../lib/des-utils';
 
 interface InputPanelProps {
@@ -128,12 +129,15 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
             : 'bg-gradient-to-r from-amber-500 to-orange-600'
         } ${(!isInputValid || !isKeyValid || loading) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.02] active:scale-[0.98]'}`}
       >
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="animate-spin">⟳</span> Computing...          </span>
-        ) : (
-          <span>{mode === 'encrypt' ? '🔐 Encrypt' : '🔓 Decrypt'}</span>
-        )}
+      {loading ? (
+        <span className="flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Computing...        </span>
+      ) : (
+        <span className="flex items-center justify-center gap-2">
+          {mode === 'encrypt' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+          {mode === 'encrypt' ? 'Encrypt' : 'Decrypt'}
+        </span>
+      )}
       </button>
     </motion.div>
   );
