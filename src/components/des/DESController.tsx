@@ -28,7 +28,7 @@ export default function DESController({ trace, currentStep, steps, totalSteps, o
             <h2 className="text-xl font-bold text-white">Input Data</h2>
             <div className="glass p-4">
               <div className="mb-3">
-                <div className="text-xs text-gray-400 mb-1">Plaintext (64-bit)</div>
+                <div className="text-xs text-gray-400 mb-1">{trace.mode === 'decrypt' ? 'Ciphertext' : 'Plaintext'} (64-bit)</div>
                 <BitString bits={trace.inputBits} groupSize={8} showHex />
               </div>
               <div>

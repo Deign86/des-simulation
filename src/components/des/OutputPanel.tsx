@@ -10,7 +10,9 @@ interface OutputPanelProps {
   onReset?: () => void;
 }
 
-export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: OutputPanelProps) {
+export default function OutputPanel({ trace, mode, totalSteps, onReset }: OutputPanelProps) {
+  const calculatedSteps = 1 + 1 + 16 + 80 + 1 + 1 + 1; // input + IP + 16 KS + 80 Feistel (16*5) + swap + FP + output
+  const displaySteps = totalSteps ?? calculatedSteps;
   const checkRef = useRef<HTMLDivElement>(null);
   const [copiedHex, setCopiedHex] = useState(false);
   const [copiedB64, setCopiedB64] = useState(false);
@@ -96,7 +98,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: O
               )}
             </h2>
             <p className="text-gray-400 text-sm mt-1">
-              Final 64-bit output block after all 16 rounds
+              {mode === 'encrypt' ? 'Final 64-bit ciphertext after all 16 rounds' : 'Final 64-bit recovered plaintext after all 16 rounds'}
             </p>
           </div>
         </div>
@@ -177,7 +179,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: O
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
           <Clock className="w-5 h-5 mx-auto mb-2 text-amber-400" />
-          <div className="text-lg font-bold text-white">{totalSteps}</div>
+          <div className="text-lg font-bold text-white">{displaySteps}</div>
           <div className="text-xs text-gray-400">Steps</div>
         </div>
       </div>

@@ -46,8 +46,8 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
     }
   };
 
-  const isInputValid = inputBitCount > 0 && inputBitCount <= 512;
-  const isKeyValid = keyBitCount === 64;
+  const isInputValid = inputBitCount > 0 && inputBitCount <= 512 && (mode === 'decrypt' || isInputHex || inputValue.length === 0);
+  const isKeyValid = keyBitCount === 64 && keyValue.length > 0;
   const isIvValid = ivBitCount === 64 || ivBitCount === 0;
 
   return (
@@ -104,8 +104,8 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
                Random
              </button>
            </div>
-          <div className={`text-xs mt-1 ${isKeyValid ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {keyBitCount === 0 && keyValue.length > 0 ? 'Invalid input' : `${keyBitCount}/64 bits`}
+          <div className={`text-xs mt-1 ${isKeyValid ? 'text-emerald-400' : keyValue.length === 0 ? 'text-rose-400' : 'text-amber-400'}`}>
+            {keyValue.length === 0 ? 'Key required' : keyBitCount === 0 ? 'Invalid input' : `${keyBitCount}/64 bits`}
             {keyValue.length > 0 && keyBitCount > 0 && keyBitCount < 64 && ' (will pad to 64 bits)'}
           </div>
         </div>
@@ -138,7 +138,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               </button>
             </div>
             <div className={`text-xs mt-1 ${isIvValid ? 'text-emerald-400' : 'text-amber-400'}`}>
-              {ivBitCount === 0 ? 'No IV (ECB mode)' : `${ivBitCount}/64 bits OK`}
+              {ivBitCount === 0 ? 'No IV (ECB mode)' : ivBitCount === 64 ? `${ivBitCount}/64 bits OK` : `${ivBitCount}/64 bits — must be exactly 64 bits (8 chars)`}
             </div>
           </div>
         </div>
