@@ -109,7 +109,7 @@ export default function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="max-w-5xl mx-auto space-y-6 min-h-screen py-12 px-4 pr-80"
+                className="max-w-7xl mx-auto space-y-6 min-h-screen py-12 px-4"
               >
                 <div className="flex justify-between">
                   <button
