@@ -93,22 +93,68 @@ function padInput(inputBits: number[]): number[] {
   return [...inputBits, ...padding];
 }
 
-function processBlocks(inputBits: number[], keyBits: number[], mode: 'encrypt' | 'decrypt') {
+function processBlocks(inputBits: number[], keyBits: number[], mode: 'encrypt' | 'decrypt', ivBits?: number[]) {
   const paddedBits = padInput(inputBits);
   const numBlocks = Math.ceil(paddedBits.length / 64);
-  const allCiphertext: number[] = [];
+  const allciphertext: number[] = [];
+  let previousCiphertext: number[] = ivBits ? [...ivBits] : [];
 
   for (let block = 0; block < numBlocks; block++) {
     const blockBits = paddedBits.slice(block * 64, (block + 1) * 64);
-    const afterIP = permute(blockBits, IP_TABLE);
+    
+    let inputBitsForIP: number[];
+    if (ivBits && mode === 'encrypt') {
+      inputBitsForIP = xorBits(blockBits, previousCiphertext);
+    } else {
+      inputBitsForIP = blockBits;
+    }
+    
+    const afterIP = permute(inputBitsForIP, IP_TABLE);
     const L0 = afterIP.slice(0, 32);
     const R0 = afterIP.slice(32, 64);
 
     const keySchedule = generateKeySchedule(keyBits);
     const feistelRounds = runFeistelRounds(L0, R0, keySchedule.rounds, mode);
 
-const L16 = feistelRounds[15].L_next;
+    const L16 = feistelRounds[15].L_next;
+    const R16 = feistelRounds[15].R_next;
+    const afterSwap = [...R16, ...L16];
+
+    const ciphertext = permute(afterSwap, FP_TABLE);
+    allciphertext.push(...ciphertext);
+
+    if (mode === 'decrypt' && ivBits && block < numBlocks - 1) {
+      const nextBlockBits = paddedBits.slice((block + 1) * 64, (block + 2) * 64);
+      const decryptedAfterSwap = permute(nextBlockBits, IP_TABLE);
+      previousCiphertext = decryptedAfterSwap;
+    } else {
+      previousCiphertext = ciphertext;
+    }
+  }
+
+  return { ciphertextBits: allciphertext, numBlocks };
+}
+
+export function desEncrypt(plaintextHex: string, keyHex: string, ivHex?: string): DESTrace {
+  const inputBits = hexToBits(plaintextHex);
+  const keyBits = hexToBits(keyHex);
+  const ivBits = ivHex ? hexToBits(ivHex) : undefined;
+
+  const { ciphertextBits, numBlocks } = processBlocks(inputBits, keyBits, 'encrypt', ivBits);
+  const ciphertextHex = bitsToHex(ciphertextBits);
+
+  const paddedInput = padInput(inputBits).slice(0, 64);
+  const afterIP = permute(paddedInput, IP_TABLE);
+  const L0 = afterIP.slice(0, 32);
+  const R0 = afterIP.slice(32, 64);
+
+  const keySchedule = generateKeySchedule(keyBits);
+  const feistelRounds = runFeistelRounds(L0, R0, keySchedule.rounds, 'encrypt');
+
+  const L16 = feistelRounds[15].L_next;
   const R16 = feistelRounds[15].R_next;
+  const afterSwap = [...R16, ...L16];
+  const ciphertext = permute(afterSwap, FP_TABLE);
 
   return {
     mode: 'encrypt',
@@ -130,13 +176,15 @@ const L16 = feistelRounds[15].L_next;
   };
 }
 
-export function desDecrypt(ciphertextHex: string, keyHex: string): DESTrace {
+export function desDecrypt(ciphertextHex: string, keyHex: string, ivHex?: string): DESTrace {
   const inputBits = hexToBits(ciphertextHex);
   const keyBits = hexToBits(keyHex);
+  const ivBits = ivHex ? hexToBits(ivHex) : undefined;
 
-  const { ciphertextBits, numBlocks } = processBlocks(inputBits, keyBits, 'decrypt');
+  const { ciphertextBits, numBlocks } = processBlocks(inputBits, keyBits, 'decrypt', ivBits);
 
-  const afterIP = permute(inputBits.slice(0, 64), IP_TABLE);
+  const paddedInput = padInput(inputBits).slice(0, 64);
+  const afterIP = permute(paddedInput, IP_TABLE);
   const L0 = afterIP.slice(0, 32);
   const R0 = afterIP.slice(32, 64);
 
@@ -146,8 +194,6 @@ export function desDecrypt(ciphertextHex: string, keyHex: string): DESTrace {
   const L16 = feistelRounds[15].L_next;
   const R16 = feistelRounds[15].R_next;
   const afterSwap = [...R16, ...L16];
-
-  const ciphertext = permute(afterSwap, FP_TABLE);
 
   return {
     mode: 'decrypt',

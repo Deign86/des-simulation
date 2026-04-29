@@ -9,6 +9,7 @@ import { useDES } from './hooks/useDES';
 import { useStepPlayer } from './hooks/useStepPlayer';
 import AnimatedBackground from './components/ui/AnimatedBackground';
 import { Lock, Unlock } from 'lucide-react';
+import { bitsToHex } from './lib/des-utils';
 
 // Mode Context
 interface ModeContextValue {
@@ -108,7 +109,7 @@ export default function App() {
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
-                className="max-w-6xl mx-auto space-y-6 min-h-screen py-12 px-4"
+                className="max-w-5xl mx-auto space-y-6 min-h-screen py-12 px-4 pr-80"
               >
                 <div className="flex justify-between">
                   <button
@@ -161,7 +162,7 @@ export default function App() {
                 initial={{ opacity: 0, x: 100 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
-                className="max-w-6xl mx-auto space-y-6 min-h-screen py-12 px-4"
+                className="max-w-5xl mx-auto space-y-6 min-h-screen py-12 px-4 pr-80"
               >
                 <div className="flex justify-between">
                   <button
@@ -184,12 +185,12 @@ export default function App() {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-white">Event Log</h2>
-                    <div className="max-h-96 overflow-y-auto bg-black/20 rounded-lg p-3 font-mono text-xs text-gray-300 space-y-1">
+                    <div className="h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent bg-black/20 rounded-lg p-3 font-mono text-xs text-gray-300 space-y-1">
                       {steps?.map((stepItem, idx) => (
-                        <div key={idx} className={`p-1 ${idx === currentStep ? 'bg-cyan-500/20 text-cyan-300' : ''}`}>
+                        <div key={idx} className={`p-1 cursor-pointer hover:bg-white/5 rounded ${idx === currentStep ? 'bg-cyan-500/20 text-cyan-300' : ''}`}>
                           {stepItem.label || stepItem.stage}
                         </div>
                       ))}
@@ -197,18 +198,35 @@ export default function App() {
                   </div>
 
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-white">Output</h2>
+                    <h2 className="text-xl font-bold text-white">Results</h2>
                     <div className="space-y-3">
-                      {[
-                        { label: 'Plaintext', value: trace.inputBits.join('').match(/.{4}/g)?.join(' ') || '' },
-                        { label: 'Key', value: trace.keyBits.join('').match(/.{4}/g)?.join(' ') || '' },
-                        { label: 'Ciphertext', value: trace.ciphertextHex.match(/.{4}/g)?.join(' ') || '' },
-                      ].map(({ label, value }) => (
-                        <div key={label} className="p-3 bg-white/5 rounded-lg">
-                          <div className="text-xs text-gray-400 mb-1">{label}</div>
-                          <div className="font-mono text-sm text-gray-200 break-all">{value}</div>
-                        </div>
-                      ))}
+                      {trace.mode === 'encrypt' ? (
+                        <>
+                          <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                            <div className="text-xs text-gray-400 mb-1">Input (Plaintext)</div>
+                            <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.inputBits)}</div>
+                          </div>
+                          <div className="p-3 bg-white/5 rounded-lg border border-cyan-500/30">
+                            <div className="text-xs text-cyan-400 mb-1">Output (Ciphertext)</div>
+                            <div className="font-mono text-sm text-gray-200 break-all">{trace.ciphertextHex}</div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                            <div className="text-xs text-gray-400 mb-1">Input (Ciphertext)</div>
+                            <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.inputBits)}</div>
+                          </div>
+                          <div className="p-3 bg-white/5 rounded-lg border border-cyan-500/30">
+                            <div className="text-xs text-cyan-400 mb-1">Output (Plaintext)</div>
+                            <div className="font-mono text-sm text-gray-200 break-all">{trace.ciphertextHex}</div>
+                          </div>
+                        </>
+                      )}
+                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                        <div className="text-xs text-gray-400 mb-1">Key</div>
+                        <div className="font-mono text-sm text-gray-200 break-all">{bitsToHex(trace.keyBits)}</div>
+                      </div>
                     </div>
                   </div>
                 </div>

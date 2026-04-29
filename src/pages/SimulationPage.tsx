@@ -10,7 +10,7 @@ import { useMode } from '../App';
 
 export default function SimulationPage() {
   const [showHero, setShowHero] = useState(true);
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const { mode, toggleMode } = useMode();
 
   const { trace, loading, runEncrypt, runDecrypt, reset } = useDES();

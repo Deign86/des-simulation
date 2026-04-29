@@ -58,6 +58,7 @@ export default function StepControls({
         <button
           onClick={onPrev}
           disabled={currentStep === 0}
+          title="Previous step"
           className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30"
         >
           <ChevronLeft className="w-4 h-4" />        </button>
@@ -68,6 +69,7 @@ export default function StepControls({
         <button
           onClick={onNext}
           disabled={currentStep === totalSteps - 1}
+          title="Next step"
           className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-30"
         >
           <ChevronRight className="w-4 h-4" />        </button>
@@ -76,6 +78,7 @@ export default function StepControls({
 
         <button
           onClick={onTogglePlay}
+          title={isPlaying ? 'Pause' : 'Play'}
           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
         >
           {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}        </button>
@@ -85,6 +88,7 @@ export default function StepControls({
             <button
               key={s}
               onClick={() => onSpeedChange(s)}
+              title={`Set speed to ${s}x`}
               className={`px-2 py-1 rounded text-xs font-mono transition-colors ${
                 speed === s ? 'bg-cyan-500/20 text-cyan-400' : 'hover:bg-white/10'
               }`}
@@ -92,6 +96,18 @@ export default function StepControls({
               {s}x            </button>
           ))}
         </div>
+
+        <div className="w-px h-6 bg-white/10" />
+
+        <button
+          onClick={() => {
+            for (let i = currentStep; i < totalSteps - 1; i++) onNext();
+          }}
+          disabled={currentStep === totalSteps - 1}
+          title="Skip to end"
+          className="px-2 py-1 rounded text-xs font-mono hover:bg-white/10 transition-colors disabled:opacity-30"
+        >
+          Skip →        </button>
       </div>
     </motion.div>
   );

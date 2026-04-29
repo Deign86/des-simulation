@@ -1,0 +1,11 @@
+{
+  "name": "DES Simulation",
+  "short_name": "DES",
+  "icons": [
+    {
+      "src": "/assets/des_logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

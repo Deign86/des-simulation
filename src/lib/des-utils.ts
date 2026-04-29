@@ -11,6 +11,18 @@ export function hexToBits(hex: string): number[] {
   return bits;
 }
 
+// Convert any string to bits (for plaintext input)
+export function stringToBits(str: string): number[] {
+  const bits: number[] = [];
+  for (let i = 0; i < str.length; i++) {
+    const charCode = str.charCodeAt(i);
+    for (let j = 7; j >= 0; j--) {
+      bits.push((charCode >> j) & 1);
+    }
+  }
+  return bits;
+}
+
 // Convert bit array to hex string
 export function bitsToHex(bits: number[]): string {
   let hex = '';
