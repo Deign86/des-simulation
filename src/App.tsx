@@ -39,9 +39,9 @@ export default function App() {
   const { trace, loading, runEncrypt, runDecrypt, reset: resetDES } = useDES();
   const { currentStep, totalSteps, currentStepData, isPlaying, speed, next, prev, togglePlay, setSpeed, reset: resetStep, steps } = useStepPlayer(trace);
 
-  const handleRun = (inputHex: string, keyHex: string) => {
-    if (mode === 'encrypt') runEncrypt(inputHex, keyHex);
-    else runDecrypt(inputHex, keyHex);
+  const handleRun = (inputHex: string, keyHex: string, ivHex?: string) => {
+    if (mode === 'encrypt') runEncrypt(inputHex, keyHex, ivHex);
+    else runDecrypt(inputHex, keyHex, ivHex);
     setStage('simulation');
   };
 
@@ -75,9 +75,9 @@ export default function App() {
             {stage === 'input' && (
               <motion.div
                 key="input"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="max-w-2xl mx-auto min-h-screen py-12 px-4"
               >
                 <button
@@ -106,9 +106,9 @@ export default function App() {
             {stage === 'simulation' && trace && (
               <motion.div
                 key="simulation"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 className="max-w-5xl mx-auto space-y-6 min-h-screen py-12 px-4 pr-80"
               >
                 <div className="flex justify-between">
