@@ -2,20 +2,54 @@ import { IP_TABLE, FP_TABLE, PC1_TABLE, PC2_TABLE, E_TABLE, P_TABLE, S_BOXES, SH
 import { hexToBits, bitsToHex, permute, xorBits, leftRotate, sboxLookup } from './des-utils';
 import type { DESTrace, FeistelRoundTrace, KeyScheduleRound, SBoxTrace } from '../types/des.types';
 
+/**
+ * DES (Data Encryption Standard) Implementation
+ * 
+ * This implementation follows the FIPS 46-3 standard for DES encryption and decryption.
+ * The algorithm operates on 64-bit blocks using a 56-bit key (plus 8 parity bits).
+ * 
+ * Key Steps:
+ * 1. Initial Permutation (IP) - Rearranges input bits according to IP table
+ * 2. 16 Feistel Rounds - Each round involves:
+ *    - Expansion (E-box) - Expands 32-bit half to 48 bits
+ *    - Key Mixing - XOR with subkey
+ *    - Substitution (S-boxes) - Maps 48-bit input to 32-bit output
+ *    - Permutation (P-box) - Rearranges bits according to P table
+ * 3. Final Permutation (FP) - Inverse of initial permutation
+ * 
+ * Supports both ECB and CBC modes when IV is provided.
+ */
+
+/**
+ * Generates the DES key schedule from a 64-bit key (56 bits used, 8 parity bits ignored)
+ * 
+ * Process:
+ * 1. Apply PC-1 permutation to get 56-bit key (split into C0 and D0, 28 bits each)
+ * 2. For each of 16 rounds:
+ *    - Left rotate C and D by amounts specified in shift schedule
+ *    - Apply PC-2 permutation to get 48-bit subkey
+ * 
+ * @param keyBits - 64-bit key array (including parity bits)
+ * @returns Object containing initial PC-1 result and array of 16 key schedule rounds
+ */
 function generateKeySchedule(keyBits: number[]): { afterPC1: { C0: number[], D0: number[] }, rounds: KeyScheduleRound[] } {
+  // Apply PC-1 permutation (Table 1.1 in FIPS 46-3) to get 56-bit key
   const pc1Result = permute(keyBits, PC1_TABLE);
-  const C0 = pc1Result.slice(0, 28);
-  const D0 = pc1Result.slice(28, 56);
+  const C0 = pc1Result.slice(0, 28); // Left half (C0)
+  const D0 = pc1Result.slice(28, 56); // Right half (D0)
 
   const rounds: KeyScheduleRound[] = [];
   let C = [...C0];
   let D = [...D0];
 
+  // Generate 16 round subkeys
   for (let i = 0; i < 16; i++) {
+    // Left rotate C and D by amounts from shift schedule (Table 1.2 in FIPS 46-3)
     const shift = SHIFT_SCHEDULE[i];
     C = leftRotate(C, shift);
     D = leftRotate(D, shift);
 
+    // Combine C and D and apply PC-2 permutation to get 48-bit subkey
     const cd = [...C, ...D];
     const subkey = permute(cd, PC2_TABLE);
 
@@ -30,24 +64,51 @@ function generateKeySchedule(keyBits: number[]): { afterPC1: { C0: number[], D0:
   return { afterPC1: { C0, D0 }, rounds };
 }
 
+/**
+ * Executes the 16 Feistel rounds of DES encryption or decryption
+ * 
+ * Each Feistel round consists of:
+ * 1. Expansion: 32-bit half expanded to 48 bits using E-table
+ * 2. Key mixing: XOR with round subkey
+ * 3. Substitution: 8 S-boxes map 48-bit input to 32-bit output
+ * 4. Permutation: 32-bit output permuted using P-table
+ * 5. XOR and swap: Result XORed with left half, then halves swapped
+ * 
+ * For decryption, the same algorithm is used but with subkeys applied in reverse order.
+ * 
+ * @param L0 - Initial 32-bit left half after initial permutation
+ * @param R0 - Initial 32-bit right half after initial permutation
+ * @param keySchedule - Array of 16 key schedule rounds containing subkeys
+ * @param mode - Either 'encrypt' or 'decrypt' (determines subkey order)
+ * @returns Array of 16 Feistel round traces, each containing intermediate values
+ */
 function runFeistelRounds(L0: number[], R0: number[], keySchedule: KeyScheduleRound[], mode: 'encrypt' | 'decrypt'): FeistelRoundTrace[] {
   const rounds: FeistelRoundTrace[] = [];
   let L = [...L0];
   let R = [...R0];
 
+  // For decryption, subkeys are used in reverse order
   const subkeys = mode === 'encrypt' ? keySchedule : [...keySchedule].reverse();
 
+  // Execute 16 Feistel rounds
   for (let i = 0; i < 16; i++) {
     const subkey = subkeys[i].subkey;
+    // Round number differs for encryption vs decryption due to reverse key order
     const roundNum = mode === 'encrypt' ? i + 1 : 16 - i;
 
+    // Step 1: Expansion - expand 32-bit R to 48 bits using E-box table
     const expanded = permute(R, E_TABLE);
+    // Step 2: Key mixing - XOR expanded right half with subkey
     const xorResult = xorBits(expanded, subkey);
 
+    // Step 3: Substitution - process through 8 S-boxes
     const sboxTraces: SBoxTrace[] = [];
     const sboxOutputs: number[] = [];
     for (let j = 0; j < 8; j++) {
+      // Extract 6-bit chunk for each S-box
       const input6 = xorResult.slice(j * 6, (j + 1) * 6);
+      // Lookup in S-box: outer bits (first and last) determine row,
+      // inner 4 bits determine column
       const { output4, row, col } = sboxLookup(input6, S_BOXES[j] as unknown as number[][]);
       sboxTraces.push({
         sboxIndex: j,
@@ -56,13 +117,16 @@ function runFeistelRounds(L0: number[], R0: number[], keySchedule: KeyScheduleRo
         col,
         output4: [...output4]
       });
-      sboxOutputs.push(...output4);
+      sboxOutputs.push(...output4); // Collect 4-bit outputs from each S-box
     }
 
+    // Step 4: Permutation - permute concatenated S-box outputs using P-box table
     const pboxOutput = permute(sboxOutputs, P_TABLE);
-    const L_next = [...R];
-    const R_next = xorBits(L, pboxOutput);
+    // Step 5: XOR and swap - XOR P-box output with left half, then swap halves
+    const L_next = [...R];           // New left half is old right half
+    const R_next = xorBits(L, pboxOutput); // New right half is L XOR P-box output
 
+    // Store trace for this round including all intermediate values
     rounds.push({
       round: roundNum,
       L_prev: [...L],
@@ -77,6 +141,7 @@ function runFeistelRounds(L0: number[], R0: number[], keySchedule: KeyScheduleRo
       R_next
     });
 
+    // Update halves for next round
     L = L_next;
     R = R_next;
   }

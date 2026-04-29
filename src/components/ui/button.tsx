@@ -41,4 +41,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, va
 })
 Button.displayName = "Button"
 
+// Memoize the Button component to prevent unnecessary re-renders
+export default React.memo(Button, (prevProps, nextProps) => {
+  // Only re-render if relevant props change
+  return (
+    prevProps.className === nextProps.className &&
+    prevProps.variant === nextProps.variant &&
+    prevProps.size === nextProps.size &&
+    prevProps.asChild === nextProps.asChild
+  );
+});
+
 export { Button, buttonVariants }

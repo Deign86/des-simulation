@@ -61,21 +61,23 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
           <label className="block text-sm font-medium text-white mb-2">
             {mode === 'encrypt' ? 'Plaintext' : 'Ciphertext'} (text or hex)
           </label>
-          <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              placeholder="Enter any text or hex..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
-            />
-            <button
-              onClick={() => handleRandom('input')}
-              className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
-            >
-              Random
-            </button>
-          </div>
+           <div className="flex gap-2 items-center">
+             <input
+               type="text"
+               value={inputValue}
+               onChange={e => setInputValue(e.target.value)}
+               placeholder="Enter any text or hex..."
+               aria-label={mode === 'encrypt' ? 'Plaintext input' : 'Ciphertext input'}
+               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
+             />
+             <button
+               onClick={() => handleRandom('input')}
+               aria-label="Generate random input"
+               className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
+             >
+               Random
+             </button>
+           </div>
           <div className={`text-xs mt-1 ${isInputValid ? 'text-emerald-400' : 'text-amber-400'}`}>
             {inputBitCount > 0 ? `${inputBitCount} bits ${mode === 'decrypt' || isInputHex ? `(${inputValue.length} hex chars)` : `(plaintext)`} ${inputBitCount % 64 !== 0 && '(will pad)'}` : 'Enter input to continue'}
           </div>
@@ -85,21 +87,23 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
           <label className="block text-sm font-medium text-white mb-2">
             Secret Key (text or 64-bit hex)
           </label>
-          <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              value={keyValue}
-              onChange={e => setKeyValue(e.target.value)}
-              placeholder="Enter text or 16 hex chars..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
-            />
-            <button
-              onClick={() => handleRandom('key')}
-              className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
-            >
-              Random
-            </button>
-          </div>
+           <div className="flex gap-2 items-center">
+             <input
+               type="text"
+               value={keyValue}
+               onChange={e => setKeyValue(e.target.value)}
+               placeholder="Enter text or 16 hex chars..."
+               aria-label="Secret key input"
+               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
+             />
+             <button
+               onClick={() => handleRandom('key')}
+               aria-label="Generate random key"
+               className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
+             >
+               Random
+             </button>
+           </div>
           <div className={`text-xs mt-1 ${isKeyValid ? 'text-emerald-400' : 'text-rose-400'}`}>
             {keyBitCount === 0 && keyValue.length > 0 ? 'Invalid input' : `${keyBitCount}/64 bits`}
             {keyValue.length > 0 && keyBitCount > 0 && keyBitCount < 64 && ' (will pad to 64 bits)'}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import type { KeyScheduleRound } from '../../types/des.types';
 import { Check } from 'lucide-react';
@@ -12,11 +12,17 @@ export default function StageKeySchedule({ rounds, activeRound }: StageKeySchedu
   const [expandedRound, setExpandedRound] = useState<number | null>(activeRound ?? null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Update expandedRound state when activeRound changes
   useEffect(() => {
     if (activeRound !== undefined) {
       setExpandedRound(activeRound);
-      // Scroll to active round
-      const el = containerRef.current?.querySelector(`[data-round="${activeRound}"]`);
+    }
+  }, [activeRound]);
+
+  // Scroll to active round after DOM updates
+  useLayoutEffect(() => {
+    if (activeRound !== undefined && containerRef.current) {
+      const el = containerRef.current.querySelector(`[data-round="${activeRound}"]`);
       el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [activeRound]);

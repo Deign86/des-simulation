@@ -38,9 +38,14 @@ export function useStepPlayer(trace: DESTrace | null) {
     };
   }, [isPlaying, currentStep, speed, totalSteps, goToStep]);
 
+  // Reset when trace changes - use a ref to avoid stale closure issues
+  const prevTraceRef = useRef<DESTrace | null>(null);
   useEffect(() => {
-    setCurrentStep(0);
-    setIsPlaying(false);
+    if (trace !== prevTraceRef.current) {
+      prevTraceRef.current = trace;
+      setCurrentStep(0);
+      setIsPlaying(false);
+    }
   }, [trace]);
 
   const reset = useCallback(() => {

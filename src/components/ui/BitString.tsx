@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useCallback } from 'react';
 
 interface BitStringProps {
   bits: number[];
@@ -8,7 +8,7 @@ interface BitStringProps {
   showHex?: boolean;
 }
 
-export default function BitString({ bits, prevBits, groupSize = 4, label, showHex = true }: BitStringProps) {
+const BitString = memo(function BitString({ bits, prevBits, groupSize = 4, label, showHex = true }: BitStringProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,4 +67,6 @@ export default function BitString({ bits, prevBits, groupSize = 4, label, showHe
       )}
     </div>
   );
-}
+});
+
+export default BitString;
