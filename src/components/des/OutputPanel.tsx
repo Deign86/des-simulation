@@ -139,7 +139,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: O
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div className="bg-white/10 rounded-lg p-4 text-center">
           <Key className="w-5 h-5 mx-auto mb-2 text-amber-400" />
           <div className="text-lg font-bold text-white break-all px-1">{keyHex}</div>
