@@ -142,12 +142,12 @@ export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: O
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white/10 rounded-lg p-4 text-center">
           <Key className="w-5 h-5 mx-auto mb-2 text-amber-400" />
-          <div className="text-lg font-bold text-white">{keyHex.slice(0, 8)}...</div>
+          <div className="text-lg font-bold text-white break-all px-1">{keyHex}</div>
           <div className="text-xs text-gray-400">Key</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
           <Cylinder className="w-5 h-5 mx-auto mb-2 text-amber-400" />
-          <div className="text-lg font-bold text-white">{ivDisplay || 'none'}</div>
+          <div className="text-lg font-bold text-white break-all px-1">{ivDisplay || 'none'}</div>
           <div className="text-xs text-gray-400">IV</div>
         </div>
         <div className="bg-white/10 rounded-lg p-4 text-center">
