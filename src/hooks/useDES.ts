@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { desEncrypt, desDecrypt } from '../lib/des';
-import { DESTrace } from '../types/des.types';
+import type { DESTrace } from '../types/des.types';
 
 export function useDES() {
   const [trace, setTrace] = useState<DESTrace | null>(null);
@@ -8,7 +8,6 @@ export function useDES() {
 
   const runEncrypt = useCallback((plaintextHex: string, keyHex: string) => {
     setLoading(true);
-    // Use setTimeout to avoid blocking UI thread
     setTimeout(() => {
       const result = desEncrypt(plaintextHex, keyHex);
       setTrace(result);

@@ -36,7 +36,7 @@ export default function StageCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: 'ease-out' }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
       className={`glass ${statusColors[status]} p-6 space-y-4`}
     >
       <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsOpen(!isOpen)}>

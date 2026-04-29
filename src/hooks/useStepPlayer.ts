@@ -1,15 +1,14 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { DESTrace, Step, DESStage } from '../types/des.types';
+import type { DESTrace, Step } from '../types/des.types';
 import { buildStepList } from '../lib/des-trace';
 
 export function useStepPlayer(trace: DESTrace | null) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const playTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const playTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const steps: Step[] = trace ? buildStepList(trace) : [];
-
   const totalSteps = steps.length;
 
   const goToStep = useCallback((step: number) => {
@@ -28,7 +27,6 @@ export function useStepPlayer(trace: DESTrace | null) {
     setIsPlaying(prev => !prev);
   }, []);
 
-  // Auto-play effect
   useEffect(() => {
     if (isPlaying && currentStep < totalSteps - 1) {
       playTimerRef.current = setTimeout(() => {
@@ -40,7 +38,6 @@ export function useStepPlayer(trace: DESTrace | null) {
     };
   }, [isPlaying, currentStep, speed, totalSteps, goToStep]);
 
-  // Reset on trace change
   useEffect(() => {
     setCurrentStep(0);
     setIsPlaying(false);

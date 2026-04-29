@@ -1,5 +1,3 @@
-import { SBoxTrace } from '../types/des.types';
-
 // Convert hex string to bit array (0|1)
 export function hexToBits(hex: string): number[] {
   const cleanHex = hex.replace(/[^0-9a-fA-F]/g, '');

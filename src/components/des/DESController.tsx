@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import type { DESTrace, Step, DESStage } from '../../types/des.types';
+import type { DESTrace, Step } from '../../types/des.types';
 import StageIP from './StageIP';
 import StageKeySchedule from './StageKeySchedule';
 import StageFeistel from './StageFeistel';

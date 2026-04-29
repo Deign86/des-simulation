@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   mode: 'encrypt' | 'decrypt';
@@ -9,8 +7,6 @@ interface HeaderProps {
 }
 
 export default function Header({ mode, onModeToggle, onAbout }: HeaderProps) {
-  const navigate = useNavigate();
-
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
@@ -19,12 +15,11 @@ export default function Header({ mode, onModeToggle, onAbout }: HeaderProps) {
     >
       <div className="flex items-center gap-4">
         <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-          DES Simulation
-        </h1>
+          DES Simulation        </h1>
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Mode Toggle (Component 13) */}
+        {/* Mode Toggle */}
         <div className="bg-white/5 rounded-full p-1 flex relative">
           <motion.div
             className="absolute inset-y-1 rounded-full bg-cyan-500/20"

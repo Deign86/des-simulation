@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { hexToBits, bitsToHex } from '../../lib/des-utils';
+import { hexToBits } from '../../lib/des-utils';
 
 interface InputPanelProps {
   mode: 'encrypt' | 'decrypt';
@@ -18,7 +18,6 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
   const [inputHex, setInputHex] = useState('');
   const [keyHex, setKeyHex] = useState('');
   const [showHex, setShowHex] = useState(true);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const inputBits = hexToBits(inputHex);
   const keyBits = hexToBits(keyHex);
@@ -53,7 +52,6 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
           </label>
           <div className="flex gap-2 items-center">
             <input
-              ref={inputRef}
               type="text"
               value={showHex ? inputHex : inputBits.join('')}
               onChange={e => {
@@ -74,12 +72,10 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               onClick={() => handleRandom('input')}
               className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
             >
-              Random
-            </button>
+              Random            </button>
           </div>
           <div className={`text-xs mt-1 ${isInputValid ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {inputBitCount}/64 bits
-          </div>
+            {inputBitCount}/64 bits          </div>
         </div>
 
         <div>
@@ -105,12 +101,10 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               onClick={() => handleRandom('key')}
               className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
             >
-              Random
-            </button>
+              Random            </button>
           </div>
           <div className={`text-xs mt-1 ${isKeyValid ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {keyBitCount}/64 bits
-          </div>
+            {keyBitCount}/64 bits          </div>
         </div>
       </div>
 
@@ -121,8 +115,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
             onClick={() => { setInputHex(preset.input); setKeyHex(preset.key); }}
             className="px-3 py-1.5 bg-white/5 rounded-full text-xs hover:bg-white/10 transition-colors"
           >
-            {preset.name}
-          </button>
+            {preset.name}          </button>
         ))}
       </div>
 
@@ -137,8 +130,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="animate-spin">⟳</span> Computing...
-          </span>
+            <span className="animate-spin">⟳</span> Computing...          </span>
         ) : (
           <span>{mode === 'encrypt' ? '🔐 Encrypt' : '🔓 Decrypt'}</span>
         )}

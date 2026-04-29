@@ -69,7 +69,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose }: Education
       initial={{ opacity: 0, x: 320 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 320 }}
-      transition={{ duration: 0.3, ease: 'ease-in-out' }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="fixed right-0 top-0 h-full w-80 glass border-l border-white/10 p-6 overflow-y-auto z-40"
     >
       <div className="flex items-center justify-between mb-6">

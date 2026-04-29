@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/hero/HeroSection';
 import InputPanel from '../components/input/InputPanel';
 import DESController from '../components/des/DESController';
@@ -29,7 +28,6 @@ export default function SimulationPage() {
     resetStep();
   }, [reset, resetStep]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') prev();
@@ -48,17 +46,14 @@ export default function SimulationPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-      {/* Input Panel */}
       {!trace && <InputPanel mode={mode} onRun={handleRun} loading={loading} />}
 
-      {/* DES Visualization */}
       {trace && (
         <div className="flex gap-6">
           <div className="flex-1">
             <DESController trace={trace} currentStep={currentStep} steps={steps} />
           </div>
 
-          {/* Educational Sidebar */}
           <EducationalSidebar
             stage={currentStepData?.stage ?? null}
             isOpen={showSidebar}
@@ -67,7 +62,6 @@ export default function SimulationPage() {
         </div>
       )}
 
-      {/* Step Controls */}
       {trace && totalSteps > 0 && (
         <StepControls
           currentStep={currentStep}

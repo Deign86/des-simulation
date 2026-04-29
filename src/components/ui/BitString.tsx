@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 
 interface BitStringProps {
   bits: number[];
@@ -7,20 +6,11 @@ interface BitStringProps {
   groupSize?: number;
   label?: string;
   showHex?: boolean;
-  accentColor?: string;
 }
 
-export default function BitString({
-  bits,
-  prevBits,
-  groupSize = 4,
-  label,
-  showHex = true,
-  accentColor = 'cyan'
-}: BitStringProps) {
+export default function BitString({ bits, prevBits, groupSize = 4, label, showHex = true }: BitStringProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // WAAPI: Pulse animation on changed bits (transform scale + opacity)
   useEffect(() => {
     if (!containerRef.current || !prevBits) return;
     const bitEls = containerRef.current.querySelectorAll('[data-bit]');
@@ -38,7 +28,7 @@ export default function BitString({
     });
   }, [bits, prevBits]);
 
-  const groups = [];
+  const groups: number[][] = [];
   for (let i = 0; i < bits.length; i += groupSize) {
     groups.push(bits.slice(i, i + groupSize));
   }

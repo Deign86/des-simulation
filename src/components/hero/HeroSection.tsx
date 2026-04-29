@@ -1,35 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-// WAAPI fallback: Framer Motion uses transform/opacity only (no layout triggers)
 export default function HeroSection({ onStart }: { onStart: () => void }) {
-  const [visible, setVisible] = useState(true);
   const lockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Pulse animation via WAAPI on lock icon
     const el = lockRef.current;
     if (!el) return;
     const anim = el.animate(
-      [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.15)', opacity: 0.7 }, { transform: 'scale(1)', opacity: 1 }],
+      [
+        { transform: 'scale(1)', opacity: 1 },
+        { transform: 'scale(1.15)', opacity: 0.7 },
+        { transform: 'scale(1)', opacity: 1 }
+      ],
       { duration: 2000, iterations: Infinity, easing: 'ease-in-out' }
     );
     return () => anim.cancel();
   }, []);
 
-  if (!visible) return null;
-
   return (
     <motion.div
       className="min-h-screen flex items-center justify-center px-6"
       exit={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
-      transition={{ duration: 0.5, ease: 'ease-in-out' }}
+      transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
       <div className="text-center space-y-8 max-w-3xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'ease-out' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <div ref={lockRef} className="text-6xl mb-6 inline-block">
             🔒
@@ -47,7 +46,7 @@ export default function HeroSection({ onStart }: { onStart: () => void }) {
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3, ease: 'ease-out' }}
+          transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
           onClick={onStart}
           className="relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full text-lg overflow-hidden group"
           whileHover={{ scale: 1.05 }}
