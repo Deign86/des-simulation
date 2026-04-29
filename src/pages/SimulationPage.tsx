@@ -51,7 +51,7 @@ export default function SimulationPage() {
       {trace && (
         <div className="flex gap-6">
           <div className="flex-1">
-            <DESController trace={trace} currentStep={currentStep} steps={steps} />
+            <DESController trace={trace} currentStep={currentStep} steps={steps} totalSteps={totalSteps} />
           </div>
 
           <EducationalSidebar

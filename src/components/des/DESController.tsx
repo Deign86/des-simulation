@@ -12,9 +12,10 @@ interface DESControllerProps {
   trace: DESTrace;
   currentStep: number;
   steps: Step[];
+  totalSteps?: number;
 }
 
-export default function DESController({ trace, currentStep, steps }: DESControllerProps) {
+export default function DESController({ trace, currentStep, steps, totalSteps }: DESControllerProps) {
   const step = steps[currentStep];
   if (!step) return null;
 
@@ -87,14 +88,7 @@ export default function DESController({ trace, currentStep, steps }: DESControll
         return <StageFP trace={trace} isActive />;
 
       case 'output':
-        return (
-          <OutputPanel
-            plaintextHex={trace.mode === 'encrypt' ? '' : trace.ciphertextHex}
-            keyHex={trace.ciphertextHex}
-            ciphertextHex={trace.ciphertextHex}
-            mode={trace.mode}
-          />
-        );
+        return <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} />;
 
       default:
         return null;

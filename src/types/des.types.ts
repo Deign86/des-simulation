@@ -33,6 +33,8 @@ export interface DESTrace {
   mode: 'encrypt' | 'decrypt';
   inputBits: number[];         // plaintext bits
   keyBits: number[];           // 64-bit key
+  ivBits?: number[];           // 64-bit IV (optional)
+  cipherMode: 'CBC' | 'ECB';    // cipher mode used
   afterIP: number[];           // after Initial Permutation (first block)
   L0: number[];                // left 32 bits after IP
   R0: number[];                // right 32 bits after IP
