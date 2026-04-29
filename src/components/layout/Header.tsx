@@ -11,7 +11,8 @@ export default function Header({ onAbout }: { onAbout: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       className="glass mx-4 mt-4 mb-2 px-6 py-3 flex items-center justify-between"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        <img src="/assets/des_logo.png" alt="DSE" className="h-8 w-auto" />
         <h1 className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
           DES Simulation        </h1>
       </div>

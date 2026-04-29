@@ -84,11 +84,48 @@ function runFeistelRounds(L0: number[], R0: number[], keySchedule: KeyScheduleRo
   return rounds;
 }
 
+function padInput(inputBits: number[]): number[] {
+  const remainder = inputBits.length % 64;
+  if (remainder === 0) return inputBits;
+  const paddingNeeded = 64 - remainder;
+  const padding = Array(paddingNeeded).fill(0);
+  padding[0] = 1;
+  return [...inputBits, ...padding];
+}
+
+function processBlocks(inputBits: number[], keyBits: number[], mode: 'encrypt' | 'decrypt') {
+  const paddedBits = padInput(inputBits);
+  const numBlocks = Math.ceil(paddedBits.length / 64);
+  const allCiphertext: number[] = [];
+
+  for (let block = 0; block < numBlocks; block++) {
+    const blockBits = paddedBits.slice(block * 64, (block + 1) * 64);
+    const afterIP = permute(blockBits, IP_TABLE);
+    const L0 = afterIP.slice(0, 32);
+    const R0 = afterIP.slice(32, 64);
+
+    const keySchedule = generateKeySchedule(keyBits);
+    const feistelRounds = runFeistelRounds(L0, R0, keySchedule.rounds, mode);
+
+    const L16 = feistelRounds[15].L_next;
+    const R16 = feistelRounds[15].R_next;
+    const afterSwap = [...R16, ...L16];
+
+    const ciphertext = permute(afterSwap, FP_TABLE);
+    allCiphertext.push(...ciphertext);
+  }
+
+  return { ciphertextBits: allCiphertext, numBlocks };
+}
+
 export function desEncrypt(plaintextHex: string, keyHex: string): DESTrace {
   const inputBits = hexToBits(plaintextHex);
   const keyBits = hexToBits(keyHex);
 
-  const afterIP = permute(inputBits, IP_TABLE);
+  const { ciphertextBits, numBlocks } = processBlocks(inputBits, keyBits, 'encrypt');
+  const ciphertextHex = bitsToHex(ciphertextBits);
+
+  const afterIP = permute(padInput(inputBits).slice(0, 64), IP_TABLE);
   const L0 = afterIP.slice(0, 32);
   const R0 = afterIP.slice(32, 64);
 
@@ -100,7 +137,6 @@ export function desEncrypt(plaintextHex: string, keyHex: string): DESTrace {
   const afterSwap = [...R16, ...L16];
 
   const ciphertext = permute(afterSwap, FP_TABLE);
-  const ciphertextHex = bitsToHex(ciphertext);
 
   return {
     mode: 'encrypt',
@@ -117,7 +153,8 @@ export function desEncrypt(plaintextHex: string, keyHex: string): DESTrace {
     preSwap: { L16: [...L16], R16: [...R16] },
     afterSwap,
     ciphertext,
-    ciphertextHex
+    ciphertextHex,
+    numBlocks
   };
 }
 
@@ -125,7 +162,9 @@ export function desDecrypt(ciphertextHex: string, keyHex: string): DESTrace {
   const inputBits = hexToBits(ciphertextHex);
   const keyBits = hexToBits(keyHex);
 
-  const afterIP = permute(inputBits, IP_TABLE);
+  const { ciphertextBits, numBlocks } = processBlocks(inputBits, keyBits, 'decrypt');
+
+  const afterIP = permute(inputBits.slice(0, 64), IP_TABLE);
   const L0 = afterIP.slice(0, 32);
   const R0 = afterIP.slice(32, 64);
 
@@ -137,7 +176,6 @@ export function desDecrypt(ciphertextHex: string, keyHex: string): DESTrace {
   const afterSwap = [...R16, ...L16];
 
   const ciphertext = permute(afterSwap, FP_TABLE);
-  const resultCiphertextHex = bitsToHex(ciphertext);
 
   return {
     mode: 'decrypt',
@@ -153,7 +191,8 @@ export function desDecrypt(ciphertextHex: string, keyHex: string): DESTrace {
     feistelRounds,
     preSwap: { L16: [...L16], R16: [...R16] },
     afterSwap,
-    ciphertext,
-    ciphertextHex: resultCiphertextHex
+    ciphertext: ciphertextBits,
+    ciphertextHex: bitsToHex(ciphertextBits),
+    numBlocks
   };
 }

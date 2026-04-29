@@ -31,9 +31,9 @@ export type DESStage = 'input' | 'ip' | 'key-schedule' | 'feistel' | 'swap' | 'f
 
 export interface DESTrace {
   mode: 'encrypt' | 'decrypt';
-  inputBits: number[];         // 64-bit plaintext
+  inputBits: number[];         // plaintext bits
   keyBits: number[];           // 64-bit key
-  afterIP: number[];           // after Initial Permutation
+  afterIP: number[];           // after Initial Permutation (first block)
   L0: number[];                // left 32 bits after IP
   R0: number[];                // right 32 bits after IP
   keySchedule: {
@@ -43,8 +43,9 @@ export interface DESTrace {
   feistelRounds: FeistelRoundTrace[];
   preSwap: { L16: number[]; R16: number[] };
   afterSwap: number[];         // R16 + L16 concatenated
-  ciphertext: number[];        // 64-bit after FP
+  ciphertext: number[];        // ciphertext bits
   ciphertextHex: string;
+  numBlocks: number;           // number of 64-bit blocks processed
 }
 
 export interface Step {

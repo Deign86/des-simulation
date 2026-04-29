@@ -32,12 +32,12 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
   };
 
   const handleSubmit = () => {
-    if (inputBitCount === 64 && keyBitCount === 64) {
+    if (inputBitCount > 0 && keyBitCount === 64) {
       onRun(inputHex, keyHex);
     }
   };
 
-  const isInputValid = inputBitCount === 64;
+  const isInputValid = inputBitCount > 0 && inputBitCount <= 512;
   const isKeyValid = keyBitCount === 64;
 
   return (
@@ -48,21 +48,20 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
     >
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            {mode === 'encrypt' ? 'Plaintext' : 'Ciphertext'} (64-bit)
+          <label className="block text-sm font-medium text-white mb-2">
+            {mode === 'encrypt' ? 'Plaintext' : 'Ciphertext'} (hex)
           </label>
           <div className="flex gap-2 items-center">
-            <input
-              type="text"
-              value={showHex ? inputHex : inputBits.join('')}
-              onChange={e => {
-                const val = e.target.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
-                setInputHex(val);
-              }}
-              placeholder="Enter 16 hex chars..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
-              maxLength={16}
-            />
+        <input
+          type="text"
+          value={showHex ? inputHex : inputBits.join('')}
+          onChange={e => {
+            const val = e.target.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+            setInputHex(val);
+          }}
+          placeholder="Enter hex (any length)..."
+          className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm dark:bg-gray-900/30 dark:border-gray-600 dark:text-gray-200 focus:outline-none focus:border-cyan-500/50 transition-colors"
+        />
             <button
               onClick={() => setShowHex(!showHex)}
               className="px-3 py-3 bg-white/5 rounded-lg text-xs font-mono hover:bg-white/10 transition-colors"
@@ -76,11 +75,12 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               Random            </button>
           </div>
           <div className={`text-xs mt-1 ${isInputValid ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {inputBitCount}/64 bits          </div>
+            {inputBitCount} bits ({inputHex.length} hex chars) {inputBitCount % 64 !== 0 && '(will pad to block size)'}
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-white mb-2">
             Secret Key (64-bit)
           </label>
           <div className="flex gap-2 items-center">
@@ -88,7 +88,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               type="text"
               value={keyHex}
               onChange={e => setKeyHex(e.target.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase())}
-              placeholder="Enter 16 hex chars..."
+              placeholder="Enter 16 hex chars (64-bit key)..."
               className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 font-mono text-sm focus:outline-none focus:border-cyan-500/50 transition-colors"
               maxLength={16}
             />
