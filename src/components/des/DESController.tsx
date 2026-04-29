@@ -96,7 +96,7 @@ export default function DESController({ trace, currentStep, steps, totalSteps }:
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex-1 flex items-center justify-center space-y-6">
       {renderStepContent()}
     </div>
   );
