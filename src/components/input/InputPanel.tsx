@@ -79,7 +79,13 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
              </button>
            </div>
           <div className={`text-xs mt-1 ${isInputValid ? 'text-success' : 'text-warning'}`}>
-            {inputBitCount > 0 ? `${inputBitCount} bits ${mode === 'decrypt' || isInputHex ? `(${inputValue.length} hex chars)` : `(plaintext)`} ${inputBitCount % 64 !== 0 && '(will pad)'}` : 'Enter input to continue'}
+            {inputBitCount > 0 ? (
+              <>
+                {inputBitCount} bits
+                {mode === 'decrypt' || isInputHex ? ` (${inputValue.length} hex chars — valid hex)` : ' (plaintext — will be encoded as UTF-8)'}
+                {inputBitCount % 64 !== 0 && ' (will zero-pad to 64-bit blocks)'}
+              </>
+            ) : 'Enter input to continue'}
           </div>
         </div>
 
@@ -105,8 +111,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
              </button>
            </div>
           <div className={`text-xs mt-1 ${isKeyValid ? 'text-success' : keyValue.length === 0 ? 'text-danger' : 'text-warning'}`}>
-            {keyValue.length === 0 ? 'Key required' : keyBitCount === 0 ? 'Invalid input' : `${keyBitCount}/64 bits`}
-            {keyValue.length > 0 && keyBitCount > 0 && keyBitCount < 64 && ' (will pad to 64 bits)'}
+            {keyValue.length === 0 ? 'Key required' : keyBitCount === 0 ? 'Invalid input' : `${keyBitCount}/64 bits${keyBitCount < 64 ? ' (will pad to 64 bits)' : ' — OK'}`}
           </div>
         </div>
 
@@ -138,7 +143,7 @@ export default function InputPanel({ mode, onRun, loading }: InputPanelProps) {
               </button>
             </div>
             <div className={`text-xs mt-1 ${isIvValid ? 'text-success' : 'text-warning'}`}>
-              {ivBitCount === 0 ? 'No IV (ECB mode)' : ivBitCount === 64 ? `${ivBitCount}/64 bits OK` : `${ivBitCount}/64 bits — must be exactly 64 bits (8 chars)`}
+              {ivBitCount === 0 ? 'No IV (ECB mode)' : ivBitCount === 64 ? `${ivBitCount}/64 bits — OK (CBC mode)` : `${ivBitCount}/64 bits — must be exactly 64 bits (8 bytes)`}
             </div>
           </div>
         </div>
