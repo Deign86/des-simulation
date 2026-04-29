@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, type ReactNode } from 'react';
+import { useState, createContext, useContext, type ReactNode, type FC } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroSection from './components/hero/HeroSection';
 import InputPanel from './components/input/InputPanel';
@@ -22,6 +22,16 @@ export function useMode() {
   if (!ctx) throw new Error('useMode must be used within ModeProvider');
   return ctx;
 }
+
+const ModeProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt');
+  const toggleMode = () => setMode(prev => prev === 'encrypt' ? 'decrypt' : 'encrypt');
+  return (
+    <ModeContext.Provider value={{ mode, toggleMode }}>
+      {children}
+    </ModeContext.Provider>
+  );
+};
 
 export default function App() {
   const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt');

@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useCallback } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 interface BitStringProps {
   bits: number[];
