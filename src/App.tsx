@@ -6,6 +6,7 @@ import DESController from './components/des/DESController';
 import OutputPanel from './components/des/OutputPanel';
 import StepControls from './components/ui/StepControls';
 import EducationalSidebar from './components/ui/EducationalSidebar';
+import ConfirmDialog from './components/ui/ConfirmDialog';
 import { useDES } from './hooks/useDES';
 import { useStepPlayer } from './hooks/useStepPlayer';
 import AnimatedBackground from './components/ui/AnimatedBackground';
@@ -37,6 +38,7 @@ export default function App() {
   const [mode, setMode] = useState<'encrypt' | 'decrypt'>('encrypt');
   const toggleMode = () => setMode(prev => prev === 'encrypt' ? 'decrypt' : 'encrypt');
   const [stage, setStage] = useState<'hero' | 'input' | 'simulation' | 'results'>('hero');
+  const [showConfirm, setShowConfirm] = useState(false);
   const { trace, loading, runEncrypt, runDecrypt, reset: resetDES } = useDES();
   const { currentStep, totalSteps, currentStepData, isPlaying, speed, next, prev, togglePlay, setSpeed, reset: resetStep, steps } = useStepPlayer(trace);
 
@@ -82,7 +84,7 @@ export default function App() {
                   className="max-w-2xl mx-auto min-h-screen py-12 px-4"
                 >
 <button
-                    onClick={() => { if (confirm('This will clear all your input data. Continue?')) handleReset('hero'); }}
+                    onClick={() => setShowConfirm(true)}
                     aria-label="Back to home"
                     className="mb-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all"
                   >
@@ -91,6 +93,16 @@ export default function App() {
                     </svg>
                     Back to Home
                   </button>
+                  <ConfirmDialog
+                    isOpen={showConfirm}
+                    title="Clear Input Data?"
+                    message="This will clear all your input data. You will need to re-enter your plaintext/ciphertext, key, and IV."
+                    confirmLabel="Clear & Go Home"
+                    cancelLabel="Keep Editing"
+                    variant="warning"
+                    onConfirm={() => { setShowConfirm(false); handleReset('hero'); }}
+                    onCancel={() => setShowConfirm(false)}
+                  />
                  <div className="flex justify-end mb-4">
                    <button
                      onClick={toggleMode}
