@@ -41,8 +41,9 @@ export default function StageSBoxes({ sboxTraces, round }: StageSBoxesProps) {
       </div>
 
       {isOpen && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-3">
-          {sboxTraces.map((trace) => {
+        <div className="pt-3 overflow-x-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {sboxTraces.map((trace) => {
             const sboxValues = S_BOXES[trace.sboxIndex];
             return (
               <div key={trace.sboxIndex} className="bg-white/5 rounded-lg p-3 space-y-2">
@@ -57,8 +58,9 @@ export default function StageSBoxes({ sboxTraces, round }: StageSBoxesProps) {
                   <tbody>
                     {[0, 1, 2, 3].map(row => (
                       <tr key={row}>
-                        <td className={`pr-1 text-right ${row === trace.row ? 'text-amber-400 font-bold' : 'text-gray-600'}`}>
-                          {row}                        </td>
+                        <td className={`pr-1 text-right text-[10px] w-4 ${row === trace.row ? 'text-amber-400 font-bold' : 'text-gray-600'}`}>
+                          {row}
+                        </td>
                         {Array.from({ length: 16 }, (_, col) => (
                           <td
                             key={col}
@@ -66,15 +68,16 @@ export default function StageSBoxes({ sboxTraces, round }: StageSBoxesProps) {
                               if (!activeRefs.current[trace.sboxIndex]) activeRefs.current[trace.sboxIndex] = [];
                               activeRefs.current[trace.sboxIndex][row * 16 + col] = el;
                             }}
-                            className={`p-0.5 text-center rounded ${
+                            className={`p-0.5 text-center text-[10px] ${
                               row === trace.row && col === trace.col
-                                ? 'bg-cyan-400/20 text-cyan-400 font-bold'
+                                ? 'bg-cyan-400/30 text-cyan-300 font-bold rounded'
                                 : row === trace.row || col === trace.col
-                                ? 'text-amber-400/70'
+                                ? 'text-amber-400/80'
                                 : 'text-gray-500'
                             }`}
                           >
-                            {sboxValues[row][col].toString(16).toUpperCase()}                          </td>
+                            {sboxValues[row][col].toString(16).toUpperCase()}
+                          </td>
                         ))}
                       </tr>
                     ))}
