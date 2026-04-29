@@ -30,7 +30,7 @@ const STAGE_CONTENT: Record<string, {
     facts: [
       '64 bits × 8 characters = 512 bits total for one block',
       'Every 8th bit is a parity bit (positions 8, 16, 24...64)',
-      'The 56 effective bits create 2⁵⁶ = ~72 quadrillion possible keys',
+      'The 56 effective bits create 2^56 = ~72 quadrillion possible keys',
       'Parity bits let systems detect key errors without exposing the key'
     ]
   },
@@ -40,12 +40,12 @@ const STAGE_CONTENT: Record<string, {
     lesson: 'IP rearranges the 64 input bits according to a fixed table — no key involvement, no security purpose.',
     what: 'The Initial Permutation is a simple **bit rearrangement**. It takes the 64 input bits and reorders them using a fixed permutation table. Bit 58 becomes position 1, bit 50 becomes position 2, and so on.',
     why: 'IP was designed for 1970s hardware efficiency — it rearranged bits to optimize loading into DES chips. It has NO cryptographic purpose and was removed by NSA before publication.',
-    how: 'Each position in the 64-bit block gets a new value from the original input. The result is split into L₀ (left 32 bits) and R₀ (right 32 bits) for the Feistel structure.',
-    formula: 'IP(b₁, b₂, ..., b₆₄) → [L₀, R₀]',
+    how: 'Each position in the 64-bit block gets a new value from the original input. The result is split into L0 (left 32 bits) and R0 (right 32 bits) for the Feistel structure.',
+    formula: 'IP(b1, b2, ..., b64) -> [L0, R0]',
     facts: [
       'IP has no cryptographic strength — it was for hardware loading',
-      'IP = IP⁻¹ (applying IP twice returns original)',
-      'L₀ = bits 1-32 after IP, R₀ = bits 33-64 after IP',
+      'IP = IP^-1 (applying IP twice returns original)',
+      'L0 = bits 1-32 after IP, R0 = bits 33-64 after IP',
       'IP was controversial — some suspected NSA backdoor'
     ]
   },
@@ -53,57 +53,57 @@ const STAGE_CONTENT: Record<string, {
     title: 'Key Schedule',
     icon: Key,
     lesson: 'The key schedule generates 16 unique 48-bit subkeys from the 64-bit master key.',
-    what: 'The Key Schedule transforms your 64-bit key into 16 different 48-bit subkeys (K₁ through K₁₆). First, PC-1 removes parity bits and reorders the remaining 56 bits into C₀ and D₀. Then each round rotates left by 1 or 2 bits, and PC-2 compresses to 48 bits.',
+    what: 'The Key Schedule transforms your 64-bit key into 16 different 48-bit subkeys (K1 through K16). First, PC-1 removes parity bits and reorders the remaining 56 bits into C0 and D0. Then each round rotates left by 1 or 2 bits, and PC-2 compresses to 48 bits.',
     why: 'Each round needs a unique subkey to prevent statistical analysis and cryptanalysis. The rotation schedule ensures C and D change each round while maintaining the 56-bit state.',
-    how: '1. PC-1: Remove 8 parity bits → 56 bits → split into C₀ (28 bits) and D₀ (28 bits)\n2. For each round i: rotate Cᵢ₋₁ and Dᵢ₋₁ left by shift(i)\n3. PC-2: compress 56 bits → 48 bits = subkey Kᵢ',
-    formula: 'Kᵢ = PC2(rotate(Cᵢ₋₁, shiftᵢ), rotate(Dᵢ₋₁, shiftᵢ))',
+    how: '1. PC-1: Remove 8 parity bits -> 56 bits -> split into C0 (28 bits) and D0 (28 bits)\n2. For each round i: rotate Ci-1 and Di-1 left by shift(i)\n3. PC-2: compress 56 bits -> 48 bits = subkey Ki',
+    formula: 'Ki = PC2(rotate(Ci-1, shifti), rotate(Di-1, shifti))',
     facts: [
       'Rotation schedule: [1,1,2,2,2,2,2,1,2,2,2,2,2,2,1]',
       'Rounds 1,2,8,9 rotate by 1 bit; others rotate by 2',
       'PC-2 selects exactly 48 of the 56 bits for each subkey',
-      'Decryption uses subkeys in reverse order: K₁₆ → K₁'
+      'Decryption uses subkeys in reverse order: K16 -> K1'
     ]
   },
   'feistel': {
     title: 'Feistel Rounds',
     icon: RotateCw,
-    lesson: '16 Feistel rounds apply: Lᵢ = Rᵢ₋₁, Rᵢ = Lᵢ₋₁ ⊕ f(Rᵢ₋₁, Kᵢ)',
-    what: 'Each Feistel round takes the previous R and computes a new R by: (1) E-box expands R from 32→48 bits (bit duplication), (2) XOR with subkey Kᵢ, (3) S-box substitution 48→32 bits, (4) P-box permutation. Then L becomes old R.',
+    lesson: '16 Feistel rounds apply: Li = Ri-1, Ri = Li-1 XOR f(Ri-1, Ki)',
+    what: 'Each Feistel round takes the previous R and computes a new R by: (1) E-box expands R from 32->48 bits (bit duplication), (2) XOR with subkey Ki, (3) S-box substitution 48->32 bits, (4) P-box permutation. Then L becomes old R.',
     why: 'The Feistel structure is **elegantly reversible** — decryption uses the same algorithm with reversed subkeys. It only requires the f-function to be invertible, not the entire round.',
-    how: 'E-box: 32 bits → 48 bits (each bit duplicated per E-table)\nXOR: 48-bit expanded R ⊕ 48-bit Kᵢ\nS-box: 8 × 6-bit → 8 × 4-bit (non-linear!)\nP-box: 32 bits permuted\nResult XORed with L to produce new R',
-    formula: 'Lᵢ = Rᵢ₋₁\nRᵢ = Lᵢ₋₁ ⊕ f(Rᵢ₋₁, Kᵢ)',
+    how: 'E-box: 32 bits -> 48 bits (each bit duplicated per E-table)\nXOR: 48-bit expanded R XOR 48-bit Ki\nS-box: 8 x 6-bit -> 8 x 4-bit (non-linear!)\nP-box: 32 bits permuted\nResult XORed with L to produce new R',
+    formula: 'Li = Ri-1\nRi = Li-1 XOR f(Ri-1, Ki)',
     facts: [
       'E-box duplicates bits: positions 32,1,2,3,4,5 become positions 1-6',
       'S-boxes are the ONLY non-linear operation — all else is linear/permutation',
-      '8 S-boxes × 4 bits = 32 bits output',
-      'Decryption: K₁₆, K₁₅, ..., K₁ (reverse order)'
+      '8 S-boxes x 4 bits = 32 bits output',
+      'Decryption: K16, K15, ..., K1 (reverse order)'
     ]
   },
   'swap': {
     title: 'Final Swap',
     icon: ArrowRightLeft,
-    lesson: 'After 16 rounds, swap L₁₆ and R₁₆ before the final permutation.',
-    what: 'The Feistel structure naturally produces L₁₆ and R₁₆ swapped (R goes to L in every round). After round 16, the halves are swapped one more time to complete the structure before FP.',
-    why: 'This extra swap ensures **encryption/decryption symmetry** — the same algorithm works both ways with reversed subkeys. It\'s a consequence of how Feistel networks work.',
-    how: 'After round 16: L₁₆ and R₁₆ are swapped before applying FP⁻¹. The final ciphertext is FP⁻¹(R₁₆ || L₁₆) instead of FP⁻¹(L₁₆ || R₁₆).',
+    lesson: 'After 16 rounds, swap L16 and R16 before the final permutation.',
+    what: 'The Feistel structure naturally produces L16 and R16 swapped (R goes to L in every round). After round 16, the halves are swapped one more time to complete the structure before FP.',
+    why: 'This extra swap ensures **encryption/decryption symmetry** — the same algorithm works both ways with reversed subkeys. It is a consequence of how Feistel networks work.',
+    how: 'After round 16: L16 and R16 are swapped before applying FP^-1. The final ciphertext is FP^-1(R16 || L16) instead of FP^-1(L16 || R16).',
     facts: [
       'Without this swap, decryption would need different structure',
       'The swap is why DES is symmetric for encrypt/decrypt',
       'FP then IP = identity (no change) for any input',
-      'Actually: FP = IP⁻¹, so IP ∘ FP = identity'
+      'Actually: FP = IP^-1, so IP o FP = identity'
     ]
   },
   'fp': {
     title: 'Final Permutation (FP)',
     icon: Shuffle,
     lesson: 'FP is the inverse of IP — it undoes the initial permutation to produce ciphertext.',
-    what: 'The Final Permutation (FP = IP⁻¹) rearranges the 64 bits one last time. It\'s mathematically the inverse of IP — applying IP then FP (or the reverse) returns the original bits.',
+    what: 'The Final Permutation (FP = IP^-1) rearranges the 64 bits one last time. It is mathematically the inverse of IP — applying IP then FP (or the reverse) returns the original bits.',
     why: 'FP completes the encryption by undoing IP and producing the final ciphertext block. Combined with IP, it ensures the ciphertext is properly formatted for output.',
-    how: 'FP takes the swapped output (R₁₆ || L₁₆) and permutes bits according to the FP table. The result is your 64-bit ciphertext (16 hex characters).',
-    formula: 'Ciphertext = FP(R₁₆ || L₁₆) = IP⁻¹(R₁₆ || L₁₆)',
+    how: 'FP takes the swapped output (R16 || L16) and permutes bits according to the FP table. The result is your 64-bit ciphertext (16 hex characters).',
+    formula: 'Ciphertext = FP(R16 || L16) = IP^-1(R16 || L16)',
     facts: [
-      'FP = IP⁻¹ (the inverse permutation)',
-      'IP ∘ FP = identity (cancels out)',
+      'FP = IP^-1 (the inverse permutation)',
+      'IP o FP = identity (cancels out)',
       'Bits are rearranged but no security added',
       'Was also for hardware compatibility'
     ]
@@ -113,7 +113,7 @@ const STAGE_CONTENT: Record<string, {
     icon: CheckCircle,
     lesson: 'DES produces 64-bit ciphertext from 64-bit plaintext using a 56-bit key.',
     what: 'Your encryption is complete. The 64-bit ciphertext (displayed as 16 hex characters) can only be decrypted with the same 8-character key. The result is deterministic for the same input.',
-    why: 'DES has been **broken by brute force** since 1998. EFF\'s Deep Cracker broke DES in 56 hours. Your data is NOT secure with DES — use AES-256 for modern security.',
+    why: 'DES has been **broken by brute force** since 1998. EFF Deep Cracker broke DES in 56 hours. Your data is NOT secure with DES — use AES-256 for modern security.',
     how: 'The ciphertext block is ready. Convert binary to hex (4 bits per hex digit). If CBC mode was used, each block XORs with the previous ciphertext block.',
     facts: [
       '1998: DES broken by brute force (EFF Deep Crack)',
@@ -130,6 +130,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
   if (!isOpen || !content) return null;
 
   const IconComponent = content.icon;
+  const formatBold = (text: string) => text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   return (
     <motion.div
@@ -166,12 +167,12 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
         <div className="space-y-3">
           <div className="space-y-1">
             <h5 className="text-xs font-semibold text-amber-400 uppercase tracking-wide">What Happens</h5>
-            <p className="text-sm text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: content.what.replace(/\*\*/g, '<strong>').replace(/\*\*/g, '</strong>') }} />
+            <p className="text-sm text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatBold(content.what) }} />
           </div>
 
           <div className="space-y-1">
             <h5 className="text-xs font-semibold text-purple-400 uppercase tracking-wide">Why It Matters</h5>
-            <p className="text-sm text-gray-300 leading-relaxed">{content.why}</p>
+            <p className="text-sm text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: formatBold(content.why) }} />
           </div>
 
           <div className="space-y-1">
@@ -182,7 +183,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
           {content.formula && (
             <div className="space-y-1">
               <h5 className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">Formula</h5>
-              <code className="text-sm text-emerald-300 font-mono bg-black/20 p-2 rounded block">{content.formula}</code>
+              <code className="text-sm text-emerald-300 font-mono bg-black/20 p-2 rounded block" dangerouslySetInnerHTML={{ __html: formatBold(content.formula) }} />
             </div>
           )}
 
@@ -191,7 +192,7 @@ export default function EducationalSidebar({ stage, isOpen, onClose, stepNumber,
             {content.facts.map((fact, i) => (
               <div key={i} className="flex gap-2 text-xs text-gray-400">
                 <ChevronRight className="w-3 h-3 text-cyan-400 shrink-0 mt-0.5" />
-                <span>{fact}</span>
+                <span dangerouslySetInnerHTML={{ __html: formatBold(fact) }} />
               </div>
             ))}
           </div>
