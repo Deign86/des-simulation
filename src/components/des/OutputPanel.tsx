@@ -7,9 +7,10 @@ interface OutputPanelProps {
   trace: DESTrace;
   mode: 'encrypt' | 'decrypt';
   totalSteps?: number;
+  onReset?: () => void;
 }
 
-export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPanelProps) {
+export default function OutputPanel({ trace, mode, totalSteps = 85, onReset }: OutputPanelProps) {
   const checkRef = useRef<HTMLDivElement>(null);
   const [copiedHex, setCopiedHex] = useState(false);
   const [copiedB64, setCopiedB64] = useState(false);
@@ -58,8 +59,20 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="glass min-h-screen w-full p-6 space-y-6 overflow-y-auto"
+      className="max-w-4xl mx-auto space-y-6 min-h-screen py-8 px-4"
     >
+      <div className="flex justify-between">
+        <button
+          onClick={onReset}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-gray-300 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Start Over
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div ref={checkRef} className="relative">
@@ -83,7 +96,7 @@ export default function OutputPanel({ trace, mode, totalSteps = 85 }: OutputPane
               )}
             </h2>
             <p className="text-gray-400 text-sm mt-1">
-              Step 7 — IP⁻¹ and final result
+              Final 64-bit output block after all 16 rounds
             </p>
           </div>
         </div>

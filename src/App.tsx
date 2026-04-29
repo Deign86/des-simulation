@@ -157,7 +157,7 @@ export default function App() {
 
             {/* Stage 4: Results */}
             {stage === 'results' && trace && (
-              <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} />
+              <OutputPanel trace={trace} mode={trace.mode} totalSteps={totalSteps} onReset={handleReset} />
             )}
           </AnimatePresence>
             </div>
